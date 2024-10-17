@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Privacy Settings</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="is_private" id="is_private" 
+            {% if is_private %}checked{% endif %}>  <!-- Pre-check the box if the user has a private account -->
+            <label class="form-check-label" for="is_private">
+                Make account private
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

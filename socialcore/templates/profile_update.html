@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Update Profile</h1>
+
+        <form method="POST" enctype="multipart/form-data" class="mt-4">
+            {% csrf_token %}
+            
+            <!-- Profile Picture -->
+            <div class="mb-3">
+                <label for="profile_picture" class="form-label">Profile Picture:</label>
+                <input type="file" name="profile_picture" id="profile_picture" class="form-control">
+            </div>
+
+            <!-- Username -->
+            <div class="mb-3">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" name="username" id="username" value="{{ user.username }}" class="form-control" required>
+            </div>
+
+            <!-- Name -->
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" name="name" id="name" value="{{ user.first_name }} {{ user.last_name }}" class="form-control" required>
+            </div>
+
+            <!-- Bio -->
+            <div class="mb-3">
+                <label for="bio" class="form-label">Bio:</label>
+                <textarea name="bio" id="bio" class="form-control" rows="3">{{ user.bio }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+
+      
+
+        <div class="mt-4">
+            <a href="{% url 'profile_view' user.username %}" class="btn btn-secondary">Back to Profile</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMF5Vg64bKkfT5MS4g4uecI65qnmVj2tF6yqzav6ew/aiE6kKIh7D+1T/Ex" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <!-- Link to Bootstrap for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <h2 class="text-center">Register</h2>
+
+                <!-- Django messages to display errors or success -->
+                {% if messages %}
+                    <div>
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Display JavaScript error messages -->
+                <div id="passwordError" class="alert alert-danger" style="display:none;"></div>
+
+                <form id="registrationForm" method="POST" action="{% url 'register' %}">
+                    <!-- CSRF token for security in Django forms -->
+                    {% csrf_token %}
+
+                    <!-- Username field -->
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+
+                    <!-- Email field -->
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+
+                    <!-- First Name field -->
+                    <div class="form-group">
+                        <label for="first_name">First Name:</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                    </div>
+
+                    <!-- Last Name field -->
+                    <div class="form-group">
+                        <label for="last_name">Last Name:</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                    </div>
+
+                    <!-- Phone field -->
+                    <div class="form-group">
+                        <label for="phone">Phone:</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}">
+                    </div>
+
+                    <!-- Password field -->
+                    <div class="form-group">
+                        <label for="password1">Password:</label>
+                        <input type="password" class="form-control" id="password1" name="password1" required>
+                    </div>
+
+                    <!-- Confirm Password field -->
+                    <div class="form-group">
+                        <label for="password2">Confirm Password:</label>
+                        <input type="password" class="form-control" id="password2" name="password2" required>
+                    </div>
+
+                    <!-- Submit button -->
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </form>
+
+                <!-- Link to login page -->
+                <div class="text-center mt-3">
+                    Already have an account? <a href="{% url 'login_page' %}">Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript for Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript for password validation -->
+    <script>
+        const form = document.getElementById('registrationForm');
+        const password1 = document.getElementById('password1');
+        const password2 = document.getElementById('password2');
+        const passwordError = document.getElementById('passwordError');
+
+        form.addEventListener('submit', function (event) {
+            // Regular expression to check if the password contains both letters and digits and is at least 6 characters long
+            const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+
+            // Check if the passwords match
+            if (password1.value !== password2.value) {
+                passwordError.textContent = "Passwords do not match.";
+                passwordError.style.display = 'block';
+                event.preventDefault();
+                return;
+            }
+
+            // Check if the password meets the minimum requirements
+            if (!regex.test(password1.value)) {
+                passwordError.textContent = "Password must be at least 6 characters long and contain both letters and digits.";
+                passwordError.style.display = 'block';
+                event.preventDefault();
+                return;
+            }
+
+            // If everything is okay, hide the error message
+            passwordError.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

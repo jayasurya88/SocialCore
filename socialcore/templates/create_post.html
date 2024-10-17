@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">  
+    <div class="profile-container">
+        
+        <!-- Create Post Form Section -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h3>Create a New Post</h3>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Image (optional):</label>
+                        <input type="file" id="image" name="image" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="caption" class="form-label">Caption:</label>
+                        <textarea id="caption" name="caption" rows="4" class="form-control"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location (optional):</label>
+                        <input type="text" id="location" name="location" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Grid for Posts -->
+        <div class="row mt-5 post-grid">
+            {% for post in posts %}
+            <div class="col-md-4 mb-4 post-card">
+                <div class="card post-card-body">
+                    <a href="{% url 'post_detail' post.id %}">
+                        <img src="{{ post.image.url }}" class="card-img-top post-image" alt="Post Image">
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
