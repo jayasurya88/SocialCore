@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Friend Requests{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Received Friend Requests</h2>
+    <ul class="list-group mb-5">
+        {% for request in received_requests %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ request.from_user.username }}</span>
+                <div>
+                    <a href="{% url 'accept_friend_request' request.id %}" class="btn btn-success btn-sm">Accept</a>
+                    <a href="{% url 'reject_friend_request' request.id %}" class="btn btn-danger btn-sm">Reject</a>
+                </div>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No friend requests received.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Sent Friend Requests</h2>
+    <ul class="list-group">
+        {% for request in sent_requests %}
+            <li class="list-group-item">
+                Friend request sent to {{ request.to_user.username }}
+            </li>
+        {% empty %}
+            <li class="list-group-item">No friend requests sent.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

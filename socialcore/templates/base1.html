@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sample.css' %}">
+    <title>Document</title>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2 class="log">SocialCore</h2>
+            <div class="search-bar">
+                <form method="GET" action="{% url 'user_search' %}" style="display: inline;">
+                    <i class="uil uil-search"></i>
+                    <input type="search" name="q" placeholder="search for creators, inspirations, and projects">
+                </form>
+            </div>
+            
+            <div class="create d-flex align-items-center mb-3">
+                <a href="{% url 'my_profile_view' user.username %}" class="profile-photo me-2">
+                    <img src="{{ user.profile_picture.url }}" alt="User Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                </a>
+                <a href="{% url 'create_post' %}" class="btn btn-primary">Create New Post</a>
+            </div>
+            
+        </div>
+    </nav>
+</body>
+</html>

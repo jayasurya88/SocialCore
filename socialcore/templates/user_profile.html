@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.username }}'s Profile</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"> <!-- Link to your CSS -->
+</head>
+<body>
+    <div class="profile-container">
+        <h1>{{ user.username }}'s Profile</h1>
+        <p>Email: {{ user.email }}</p>
+        
+        <!-- Display friend requests -->
+        <h2>Friend Requests</h2>
+        {% if friend_requests %}
+            <ul>
+                {% for request in friend_requests %}
+                    <li>{{ request.from_user.username }} has sent you a friend request.</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No friend requests.</p>
+        {% endif %}
+
+        <!-- Display user posts -->
+        <h2>Your Posts</h2>
+        {% if posts %}
+            <ul>
+                {% for post in posts %}
+                    <li>{{ post.title }} - {{ post.created_at }}</li> <!-- Assuming your Post model has title and created_at fields -->
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No posts available.</p>
+        {% endif %}
+        
+        <a href="{% url 'some_other_view' %}">Go Back</a> <!-- Adjust as needed -->
+    </div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!-- friends_list.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ user.username }}'s Friends{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-5">{{ user.username }}'s Friends</h2>
+    <div class="row mt-4">
+        {% for friend in friends %}
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <img src="{{ friend.profile_picture.url }}" 
+                         alt="{{ friend.username }}'s Profile Picture" 
+                         class="card-img-top rounded-circle" 
+                         width="100" height="100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ friend.username }}</h5>
+                        <a href="{% url 'profile_view' friend.username %}" class="btn btn-primary">View Profile</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>{{ user.username }} has no friends yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

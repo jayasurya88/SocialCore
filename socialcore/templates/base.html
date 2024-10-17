@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SocialCore{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+   
+    <!-- Unicons CSS -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sample.css' %}">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Qwitcher+Grypen:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Custom Styles -->
+    {% block extra_css %}
+    <style>
+        body {
+            font-size: 15px; /* Set a default font size for the body */
+        }
+        h2{
+            font-size: 22px;
+        }
+        .log{
+            font-family: "Qwitcher Grypen", cursive;
+            font-weight: 700;
+            font-style: normal;
+            font-size: 40px;
+        }
+        .user-card {
+    display: flex; /* Change to flex */
+    align-items: center; /* Center align items vertically */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px;
+    background-color: #fff;
+    width: 550px; /* Set a fixed width */
+    text-align: left; /* Align text to the left */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s; /* Add a hover effect */
+}
+
+.profile-photo {
+    margin-right: 15px; /* Space between image and text */
+}
+
+.profile-photo img {
+    border-radius: 50%; /* Keep the circular profile image */
+    width: 80px; /* Adjust size as needed */
+    height: 80px; /* Adjust size as needed */
+    object-fit: cover; /* Ensure the image fills the container properly */
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column; /* Align name and full name vertically */
+}
+
+.username {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.username:hover {
+    text-decoration: underline;
+}
+
+.full-name {
+    font-size: 14px;
+    color: #555;
+}
+
+    </style>{% endblock %}
+    
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2 class="log" >SocialCore</h2>
+            <div class="search-bar">
+                <form method="GET" action="{% url 'user_search' %}" style="display: inline;">
+                    <i class="uil uil-search"></i>
+                    <input type="search" name="q" placeholder="search for creators, inspirations, and projects">
+                </form>
+            </div>
+            
+            <div class="create d-flex align-items-center mb-3">
+                <a href="{% url 'my_profile_view' user.username %}" class="profile-photo me-2">
+                    <img src="{{ user.profile_picture.url }}" alt="User Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                </a>
+                <a href="{% url 'create_post' %}" class="btn btn-primary">Create New Post</a>
+            </div>
+            
+        </div>
+    </nav>
+    <main>
+        <div class="container">
+            <div class="left">
+                <a class="profile">
+                    <div class="profile-photo">
+                        <img src="{{ user.profile_picture.url }}" alt="">
+                    </div>
+                    <div class="handle">
+                        <h4 style="font-size: 15px;">{{ user.get_full_name }}</h4>
+                        <p class="text-muted">@{{ user.username }}</p>
+                    </div>
+                </a>
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <a class="menu-item active">
+                        <span><i class="uil uil-home"></i></span><h3>Home</h3> 
+                    </a>
+                    <a class="menu-item">
+                        <span><i class="uil uil-compass"></i></span><h3>Explore</h3>
+                    </a>
+                    <a class="menu-item" id="Notifications">
+                        <span><i class="uil uil-bell"><small class="notification-count">{{ notifications.count }}</small></i></span>
+                        <h3>Notifications</h3>
+                        <!-- Notification popup -->
+                        <div class="notifications-popup">
+                            {% for notification in notifications %}
+                                <div>
+                                    <div class="profile-photo">
+                                        <img src="{{ notification.from_user.profile_picture.url }}" alt="pic">
+                                    </div>
+                                    <div class="notification-body">
+                                        <b>{{ notification.from_user.username }}</b>
+                                        {% if notification.notification_type == 'friend_request' %}
+                                            accepted your friend request
+                                        {% elif notification.notification_type == 'comment' %}
+                                            commented on your post
+                                        {% elif notification.notification_type == 'like' %}
+                                            liked your post
+                                        {% endif %}
+                                        <small class="text-muted">{{ notification.created_at|timesince }} AGO</small>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div>No notifications available.</div>
+                            {% endfor %}
+                        </div>
+                    </a>
+                    <a class="menu-item" id="messages-notifications">
+                        <span><i class="uil uil-envelope"><small class="notification-count" id="Messages-count">6</small></i></span><h3>Messages</h3>
+                    </a>
+                    <a class="menu-item">
+                        <span><i class="uil uil-bookmark"></i></span><h3>Bookmarks</h3>
+                    </a>
+                    <a class="menu-item">
+                        <span><i class="uil uil-chart-line"></i></span><h3>Analytics</h3>
+                    </a>
+                    <a class="menu-item" id="theme">
+                        <span><i class="uil uil-palette"></i></span><h3>Theme</h3>
+                    </a>
+                    <a class="menu-item"  href="{% url 'privacy_settings' %}">
+                        <span><i class="uil uil-setting"></i></span><h3>Settings</h3>
+                    </a>      
+                </div>
+                <button class="btn btn-primary">Create Post</button>
+            </div>
+            <!-- End of Left -->
+
+            <div class="middle">
+                <!-- Feeds -->
+                <div class="feeds">
+                    {% block content %}
+        
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <div class="customize-theme">
+        <div class="card">
+            <h2>Customize your view</h2>
+            <p class="text-muted">Manage your font size, color, and background.</p>
+
+            <!-- Font sizes -->
+
+            <div class="font-size">
+                <h4>Font Size</h4>
+                <div>
+                    <h6>Aa</h6>
+                    <div class="choose-size">
+                        <span class="font-size-1"></span>
+                        <span class="font-size-2 active"></span>
+                        <span class="font-size-3"></span>
+                        <span class="font-size-4"></span>
+                        <span class="font-size-5"></span>
+                    </div>
+                    <h3>Aa</h3>
+                </div>
+            </div>
+
+            <!-- Primary colors -->
+            <div class="color">
+                <h4>Color</h4>
+                <div class="choose-color">
+                    <span class="color-1 active"></span>
+                    <span class="color-2"></span>
+                    <span class="color-3"></span>
+                    <span class="color-4"></span>
+                    <span class="color-5"></span>
+                </div>
+            </div>
+
+            <!-- Background colors -->
+            <div class="background">
+                <h4>Background</h4>
+                <div class="choose-bg">
+                    <div class="bg-1 active">
+                        <span></span>
+                        <h5>Light</h5>
+                    </div>
+                    <div class="bg-2">
+                        <span></span>
+                        <h5>Dim</h5>
+                    </div>
+                    <div class="bg-3">
+                        <span></span>
+                        <h5>Lights out</h5>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{% static 'js/sample.js' %}"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlCA9+zURbN+hFfNQ==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-czkwNiOc7x/CrvvU46vFJ65ekER7iHg5Qg==" crossorigin="anonymous"></script>
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>
