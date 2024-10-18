@@ -285,45 +285,38 @@ from .models import CustomUser
 from django.shortcuts import render, get_object_or_404
 from .models import CustomUser, FriendRequest
 def profile_view(request, username):
-    # Fetch the user by their username
+    # Fetch the user profile based on the username
     user_profile = get_object_or_404(CustomUser, username=username)
 
-    # Check if the logged-in user is accessing their own profile
+    # Determine if the logged-in user is accessing their own profile
     is_own_profile = request.user == user_profile
 
-    # Determine if the profile is private
-    is_private_profile = user_profile.is_private
-
-    # Check if the logged-in user is already friends with this profile
+    # Check friendship status
     are_friends = Friendship.objects.filter(
         Q(user1=user_profile, user2=request.user) | 
         Q(user1=request.user, user2=user_profile)
     ).exists()
 
-    # Check if the logged-in user is following the profile
+    # Check if a friend request has been sent
+    friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=user_profile).exists()
+    
+    # Check if the user is following the profile
     is_following = Friendship.objects.filter(user1=request.user, user2=user_profile).exists()
 
-    # Check if the user_profile is following the logged-in user
+    # Check if the profile follows the logged-in user
     is_followed_by_profile = Friendship.objects.filter(user1=user_profile, user2=request.user).exists()
 
     # Fetch posts based on profile visibility
     if is_own_profile:
-        # The user can always see their own posts
         user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
-    elif is_private_profile:
-        # If the profile is private and the logged-in user is following the profile
-        if is_following:
-            user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
-        else:
-            # No posts if the profile is private and the logged-in user is not following
-            user_posts = []
+    elif user_profile.is_private and not is_following:
+        user_posts = []
     else:
-        # Public profiles are always visible
         user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
 
     # Fetch counts for followers and following
-    followers_count = Friendship.objects.filter(user2=user_profile).count()  # Followers count
-    following_count = Friendship.objects.filter(user1=user_profile).count()  # Following count
+    followers_count = Friendship.objects.filter(user2=user_profile).count()
+    following_count = Friendship.objects.filter(user1=user_profile).count()
 
     # Context to pass to the template
     context = {
@@ -332,7 +325,8 @@ def profile_view(request, username):
         'followers_count': followers_count,
         'following_count': following_count,
         'are_friends': are_friends,
-        'is_followed_by_profile': is_followed_by_profile,  # If the profile follows the logged-in user
+        'friend_request_sent': friend_request_sent,
+        'is_following': is_following,
     }
 
     return render(request, 'profile.html', context)
