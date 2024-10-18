@@ -121,8 +121,12 @@
                     <a class="menu-item">
                         <span><i class="uil uil-compass"></i></span><h3>Explore</h3>
                     </a>
-                    <a class="menu-item" id="Notifications">
-                        <span><i class="uil uil-bell"><small class="notification-count">{{ notifications.count }}</small></i></span>
+                    <a class="menu-item" id="Notifications" href="{% url 'notifications' %}">
+                        <span>
+                            <i class="uil uil-bell">
+                                <small class="notification-count">{{ notifications.count }}</small>
+                            </i>
+                        </span>
                         <h3>Notifications</h3>
                         <!-- Notification popup -->
                         <div class="notifications-popup">
@@ -140,7 +144,7 @@
                                         {% elif notification.notification_type == 'like' %}
                                             liked your post
                                         {% endif %}
-                                        <small class="text-muted">{{ notification.created_at|timesince }} AGO</small>
+                                        <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
                                     </div>
                                 </div>
                             {% empty %}
@@ -148,6 +152,7 @@
                             {% endfor %}
                         </div>
                     </a>
+                    
                     <a class="menu-item" id="messages-notifications">
                         <span><i class="uil uil-envelope"><small class="notification-count" id="Messages-count">6</small></i></span><h3>Messages</h3>
                     </a>
@@ -235,11 +240,13 @@
         </div>
     </div>
 
-    <script src="{% static 'js/sample.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlCA9+zURbN+hFfNQ==" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-czkwNiOc7x/CrvvU46vFJ65ekER7iHg5Qg==" crossorigin="anonymous"></script>
     {% block extra_js %}
+   
     {% endblock %}
 </body>
 </html>

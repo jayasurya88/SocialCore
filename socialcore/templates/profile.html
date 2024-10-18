@@ -14,7 +14,7 @@
                          class="rounded-circle img-fluid" 
                          width="150" height="150">
                 {% else %}
-                     
+                    
                          alt="Default Profile Picture" 
                          class="rounded-circle img-fluid" 
                          width="150" height="150">
@@ -27,6 +27,17 @@
                     <h2 class="me-3">@ {{ user.username }}</h2>
                     {% if request.user == user %}
                         <a href="{% url 'profile_update' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+                    {% endif %}
+
+                    <!-- Friend Request Button -->
+                    {% if request.user != user %}
+                        {% if not are_friends and not friend_request_sent %}
+                            <a href="{% url 'send_friend_request' user.id %}" class="btn btn-primary ms-3">Send Friend Request</a>
+                        {% elif friend_request_sent %}
+                            <p class="text-muted ms-3">Friend request sent.</p>
+                        {% else %}
+                            <p class="text-muted ms-3">You are friends with {{ user.username }}.</p>
+                        {% endif %}
                     {% endif %}
                 </div>
 
@@ -82,7 +93,7 @@
                                 {% if post.image %}
                                     <img src="{{ post.image.url }}" class="card-img-top post-image" alt="Post Image">
                                 {% else %}
-                                  
+                                    
                                 {% endif %}
                             </a>
                         </div>
