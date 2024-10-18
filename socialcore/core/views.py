@@ -284,6 +284,12 @@ from .models import CustomUser
 
 from django.shortcuts import render, get_object_or_404
 from .models import CustomUser, FriendRequest
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
+from .models import CustomUser, Friendship, Post, FriendRequest
+
+
+
 def profile_view(request, username):
     # Fetch the user profile based on the username
     user_profile = get_object_or_404(CustomUser, username=username)
@@ -291,32 +297,32 @@ def profile_view(request, username):
     # Determine if the logged-in user is accessing their own profile
     is_own_profile = request.user == user_profile
 
-    # Check friendship status
-    are_friends = Friendship.objects.filter(
-        Q(user1=user_profile, user2=request.user) | 
-        Q(user1=request.user, user2=user_profile)
-    ).exists()
-
-    # Check if a friend request has been sent
-    friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=user_profile).exists()
-    
-    # Check if the user is following the profile
+    # Check if the logged-in user follows the profile user
     is_following = Friendship.objects.filter(user1=request.user, user2=user_profile).exists()
 
-    # Check if the profile follows the logged-in user
+    # Check if the profile user follows back
     is_followed_by_profile = Friendship.objects.filter(user1=user_profile, user2=request.user).exists()
+
+    # Determine friendship status (both users follow each other)
+    are_friends = is_following and is_followed_by_profile
 
     # Fetch posts based on profile visibility
     if is_own_profile:
+        # Show all posts for own profile
         user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
     elif user_profile.is_private and not is_following:
+        # No posts visible for non-followers on a private profile
         user_posts = []
     else:
+        # Show all posts for public profiles or followers of private profiles
         user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
 
     # Fetch counts for followers and following
     followers_count = Friendship.objects.filter(user2=user_profile).count()
     following_count = Friendship.objects.filter(user1=user_profile).count()
+
+    # Check if a friend request has been sent (optional)
+    friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=user_profile).exists()
 
     # Context to pass to the template
     context = {
@@ -324,9 +330,8 @@ def profile_view(request, username):
         'posts': user_posts,
         'followers_count': followers_count,
         'following_count': following_count,
-        'are_friends': are_friends,
-        'friend_request_sent': friend_request_sent,
-        'is_following': is_following,
+        'are_friends': are_friends,          # Pass the friendship status to the template
+        'friend_request_sent': friend_request_sent,  # Pass if a friend request has been sent
     }
 
     return render(request, 'profile.html', context)

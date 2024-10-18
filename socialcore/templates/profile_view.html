@@ -3,78 +3,74 @@
 {% block title %}{{ user.username }}'s Profile{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row mt-5">
-        <!-- Profile Picture Section -->
-        <div class="col-md-3 text-center">
-            <img src="{{ user.profile_picture.url }}" 
-                 alt="Profile Picture" 
-                 class="rounded-circle img-fluid" 
-                 width="150" height="150">
-        </div>
+<div class="container-fluid">  <!-- Full-width container -->
+    <div class="profile-container"> <!-- Profile container -->
+        <div class="row mt-5 profile-row"> <!-- Profile row -->
+            <!-- Profile Picture Section -->
+            <div class="col-md-3 text-center profile-picture-section">
+                <img src="{{ user.profile_picture.url }}" 
+                     alt="Profile Picture" 
+                     class="rounded-circle img-fluid" 
+                     width="150" height="150">
+            </div>
 
-        <!-- Profile Details Section -->
-        <div class="col-md-9">
-            <div class="d-flex align-items-center">
-                <h2 class="me-3">{{ user.username }}</h2>
-                
-                <!-- Friend Request Button -->
-                {% if request.user != user %}
-                    {% if not is_friend and not friend_request_sent %}
-                        <a href="{% url 'send_friend_request' user.id %}" class="btn btn-primary ms-3">
-                            Send Friend Request
-                        </a>
-                    {% elif friend_request_sent %}
-                        <p class="text-muted ms-3">Friend request sent.</p>
+            <!-- Profile Details Section -->
+            <div class="col-md-9 profile-details-section">
+                <div class="d-flex align-items-center profile-header">
+                    <h2 class="me-3">@{{ user.username }}</h2>
+                    {% if request.user == user %}
+                        <a href="{% url 'profile_update' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+                    {% endif %}
+                </div>
+
+                <!-- Display Friendship Status -->
+                {% if are_friends %}
+                    <p class="text-muted">You are friends with {{ user.username }}.</p>
+                {% elif request.user != user %}
+                    {% if not friend_request_sent %}
+                        <a href="{% url 'send_friend_request' user.id %}" class="btn btn-primary ms-3">Send Friend Request</a>
                     {% else %}
-                        <p class="text-muted ms-3">You are friends with {{ user.username }}.</p>
+                        <p class="text-muted ms-3">Friend request sent.</p>
                     {% endif %}
                 {% endif %}
-            </div>
 
-            <!-- Stats: Posts, Followers, Following -->
-            <div class="d-flex mt-3">
-                <p class="me-4"><strong>{{ user.posts.count }}</strong> posts</p>
-                <p class="me-4"><strong>{{ user.followers.count }}</strong> followers</p>
-                <p class="me-4"><strong>{{ user.following.count }}</strong> following</p>
-            </div>
+                <!-- Stats: Posts, Followers, Following -->
+                <div class="d-flex mt-3 profile-stats">
+                    <p class="me-4"><strong>{{ posts.count }}</strong> posts</p>
+                    <p class="me-4"><strong>{{ followers_count }}</strong> followers</p>
+                    <p class="me-4"><strong>{{ following_count }}</strong> following</p>
+                </div>
 
-            <!-- Full Name and Bio -->
-            <div class="mt-3">
-                <strong>{{ user.get_full_name }}</strong>
-                <p>{{ user.bio }}</p>
-            </div>
+                <!-- Full Name and Bio -->
+                <div class="mt-3 profile-bio-section">
+                    <strong>{{ user.get_full_name }}</strong>
+                    <p>{{ user.bio }}</p>
+                </div>
 
-            <!-- Create Post Button for the User's Own Profile -->
-            {% if request.user == user %}
-                <a href="{% url 'create_post' %}" class="btn btn-success mt-4">Create Post</a>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Grid for Posts -->
-    <div class="row mt-5">
-        {% for post in user.posts.all %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <a href="{% url 'post_detail' post.id %}">
-                        <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image">
-                    </a>
-                    <div class="card-body">
-                        <h5 class="card-title">{{ post.caption }}</h5>
-                        <p class="card-text">
-                            <small class="text-muted">Location: {{ post.location }}</small>
-                        </p>
-                        <p class="card-text">
-                            <small class="text-muted">Likes: {{ post.likes.count }}</small>
-                            <small class="text-muted">Comments: {{ post.comments.count }}</small>
-                        </p>
-                    </div>
+                <!-- Create Post Button -->
+                <div class="mt-4 create-post-btn">
+                    {% if request.user == user %}
+                        <a href="{% url 'create_post' %}" class="btn btn-primary">Create New Post</a>
+                    {% endif %}
                 </div>
             </div>
-        {% empty %}
-            <p>{{ user.username }} has not posted anything yet.</p>
-        {% endfor %}
+        </div>
+
+        <!-- Grid for Posts -->
+        <div class="row mt-5 post-grid">
+            {% for post in posts %}
+            <div class="col-md-4 col-sm-6 col-12 mb-4 post-card">
+                <div class="card post-card-body">
+                    <a href="{% url 'post_detail' post.id %}">
+                        <img src="{{ post.image.url }}" class="card-img-top post-image" alt="Post Image" style="object-fit: cover; width: 100%; height: 250px;">
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+                <p class="no-posts-message">{{ user.username }} has not posted anything yet.</p>
+            {% endfor %}
+        </div>
+
     </div>
 </div>
 {% endblock %}
