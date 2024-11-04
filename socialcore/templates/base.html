@@ -84,7 +84,7 @@
 <body>
     <nav>
         <div class="container">
-            <h2 class="log" >SocialCore</h2>
+            <h2 class="log">SocialCore</h2>
             <div class="search-bar">
                 <form method="GET" action="{% url 'user_search' %}" style="display: inline;">
                     <i class="uil uil-search"></i>
@@ -97,10 +97,17 @@
                     <img src="{{ user.profile_picture.url }}" alt="User Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
                 </a>
                 <a href="{% url 'create_post' %}" class="btn btn-primary">Create New Post</a>
+    
+                {% if user.is_authenticated %}
+                    <form method="POST" action="{% url 'custom_logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger ms-2">Logout</button>
+                    </form>
+                {% endif %}
             </div>
-            
         </div>
     </nav>
+    
     <main>
         <div class="container">
             <div class="left">
@@ -115,7 +122,7 @@
                 </a>
                 <!-- Sidebar -->
                 <div class="sidebar">
-                    <a class="menu-item active">
+                    <a class="menu-item active" href="{% url 'home'  %}">
                         <span><i class="uil uil-home"></i></span><h3>Home</h3> 
                     </a>
                     <a class="menu-item">

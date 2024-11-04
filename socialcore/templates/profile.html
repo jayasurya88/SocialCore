@@ -26,17 +26,19 @@
                         <a href="{% url 'profile_update' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
                     {% endif %}
 
-                   <!-- Friend Request Button -->
-{% if request.user != user %}
-{% if not are_friends and not friend_request_sent %}
-    <a href="{% url 'send_friend_request' user.id %}" class="btn btn-primary ms-3">Send Friend Request</a>
-{% elif friend_request_sent %}
-    <p class="text-muted ms-3">Friend request sent.</p>
-{% elif are_friends %}  <!-- Show this only if both users are friends -->
-    <p class="text-muted ms-3">You are friends with {{ user.username }}.</p>
-{% endif %}
-{% endif %}
+                    <!-- Friend Request Button -->
+                    {% if request.user != user %}
+                        {% if not are_friends and not friend_request_sent %}
+                            <a href="{% url 'send_friend_request' user.id %}" class="btn btn-primary ms-3">Send Friend Request</a>
+                        {% elif friend_request_sent %}
+                            <p class="text-muted ms-3">Friend request sent.</p>
+                        {% elif are_friends %}  <!-- Show this only if both users are friends -->
+                            <p class="text-muted ms-3">You are friends with {{ user.username }}.</p>
+                        {% endif %}
+                        <!-- Send Message Button -->
+                        <a href="{% url 'conversation_detail' conversation_id %}" class="btn btn-outline-secondary ms-3">Send Message</a>
 
+                    {% endif %}
                 </div>
 
                 <!-- Stats: Posts, Followers, Following -->
