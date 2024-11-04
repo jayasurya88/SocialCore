@@ -52,14 +52,27 @@
         <!-- Liked By Section -->
         <div class="liked-by" style="margin-top: 10px;">
             <div style="display: flex; align-items: center;">
-                {% for like in post.likes.all|slice:":3" %}
-                    <span style="margin-right: 5px;">
-                        <img src="{{ like.profile_picture.url }}" alt="{{ like.username }}'s Profile" style="width: 25px; height: 25px; border-radius: 50%;">
-                    </span>
-                {% endfor %}
+                {% if post.likes.count > 0 %}
+                    {% for like in post.likes.all|slice:":3" %}
+                        <span style="margin-right: 5px;">
+                            <img src="{{ like.profile_picture.url }}" alt="{{ like.username }}'s Profile" style="width: 25px; height: 25px; border-radius: 50%;">
+                        </span>
+                    {% endfor %}
+        
+                    {% if post.likes.count == 1 %}
+                        <p>Liked by <b>{{ post.likes.first.username }}</b></p>
+                    {% elif post.likes.first.username == request.user.username %}
+                        <p>Liked by you and <b>{{ post.likes.count|add:-1 }} others</b></p>
+                    {% else %}
+                        <p>Liked by <b>{{ post.likes.first.username }}</b> and <b>{{ post.likes.count|add:-1 }} others</b></p>
+                    {% endif %}
+                {% else %}
+                    <p>No likes yet.</p>
+                {% endif %}
             </div>
-            <p>Liked by <b>{{ post.likes.first.username }}</b> and <b>{{ post.likes.count|add:-1 }} others</b></p>
         </div>
+        
+
 
         <!-- Comments Section -->
         <h3 id="comment-section" style="margin-top: 40px;">Comments</h3>
