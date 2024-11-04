@@ -288,8 +288,6 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from .models import CustomUser, Friendship, Post, FriendRequest
 
-
-
 def profile_view(request, username):
     # Fetch the user profile based on the username
     user_profile = get_object_or_404(CustomUser, username=username)
@@ -311,27 +309,29 @@ def profile_view(request, username):
         # Show all posts for own profile
         user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
     elif user_profile.is_private and not is_following:
-        
         user_posts = []
     else:
-        
         user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
 
     # Fetch counts for followers and following
     followers_count = Friendship.objects.filter(user2=user_profile).count()
     following_count = Friendship.objects.filter(user1=user_profile).count()
 
-    
+    # Check if a friend request has been sent
     friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=user_profile).exists()
 
+    # Attempt to fetch an existing conversation between the users
+    conversation = Conversation.objects.filter(participants=request.user).filter(participants=user_profile).first()
+    conversation_id = conversation.id if conversation else None
 
     context = {
         'user': user_profile,
         'posts': user_posts,
         'followers_count': followers_count,
         'following_count': following_count,
-        'are_friends': are_friends,        
-        'friend_request_sent': friend_request_sent, 
+        'are_friends': are_friends,
+        'friend_request_sent': friend_request_sent,
+        'conversation_id': conversation_id,  # Pass conversation_id to context
     }
 
     return render(request, 'profile.html', context)

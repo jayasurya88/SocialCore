@@ -2,20 +2,15 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="mb-4">Conversation with 
-        {% for user in conversation.participants.all %}
-            {% if user != request.user %} 
-                {{ user.username }} 
-            {% endif %}
-        {% endfor %}
-    </h2>
+    
+   
 
-    <div class="messages mb-4" style="max-height: 400px; overflow-y: auto; border: 1px solid #dee2e6; padding: 10px; border-radius: 5px;">
+    <div class="messages mb-4" style="max-height: 400px; overflow-y: auto; border: 1px solid #dee2e6; padding: 10px; border-radius: 5px; margin-left: -30px;">  <!-- Increased negative margin-left -->
         {% for message in messages %}
             <div class="mb-2 {% if message.sender == request.user %}text-end{% else %}text-start{% endif %}">
                 <div class="d-flex justify-content-between">
                     <strong>{{ message.sender.username }}</strong>
-                    <small>{{ message.timestamp }}</small>
+                    <small class="text-muted">{{ message.timestamp|date:"F j, Y, g:i a" }}</small>  <!-- Formatting the timestamp -->
                 </div>
                 <div class="{% if message.sender == request.user %}bg-primary text-white p-2 rounded{% else %}bg-light p-2 rounded{% endif %}">
                     {{ message.text }}
@@ -25,11 +20,13 @@
             <p>No messages yet.</p>
         {% endfor %}
     </div>
+    <br><br><br><br>    <br><br><br><br>    <br><br><br><br>    <br><br><br><br>
 
     <form method="post">
         {% csrf_token %}
         <div class="mb-3">
-            <textarea name="message" class="form-control" placeholder="Type your message here..." required></textarea>
+            <label for="message" class="form-label">Your Message</label>  <!-- Added label for accessibility -->
+            <textarea id="message" name="message" class="form-control" placeholder="Type your message here..." required style="resize: vertical;"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Send</button>
     </form>
