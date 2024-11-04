@@ -311,27 +311,27 @@ def profile_view(request, username):
         # Show all posts for own profile
         user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
     elif user_profile.is_private and not is_following:
-        # No posts visible for non-followers on a private profile
+        
         user_posts = []
     else:
-        # Show all posts for public profiles or followers of private profiles
+        
         user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
 
     # Fetch counts for followers and following
     followers_count = Friendship.objects.filter(user2=user_profile).count()
     following_count = Friendship.objects.filter(user1=user_profile).count()
 
-    # Check if a friend request has been sent (optional)
+    
     friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=user_profile).exists()
 
-    # Context to pass to the template
+
     context = {
         'user': user_profile,
         'posts': user_posts,
         'followers_count': followers_count,
         'following_count': following_count,
-        'are_friends': are_friends,          # Pass the friendship status to the template
-        'friend_request_sent': friend_request_sent,  # Pass if a friend request has been sent
+        'are_friends': are_friends,        
+        'friend_request_sent': friend_request_sent, 
     }
 
     return render(request, 'profile.html', context)
@@ -350,11 +350,11 @@ def profile_update(request):
         new_name = request.POST.get('name')
         new_bio = request.POST.get('bio')
         
-        # Handle profile picture update
+       
         if 'profile_picture' in request.FILES:
             user.profile_picture = request.FILES['profile_picture']
 
-        # Handle username change
+      
         if new_username and new_username != user.username:
             if CustomUser.objects.filter(username=new_username).exists():
                 messages.error(request, 'Username is already taken.')
@@ -362,7 +362,7 @@ def profile_update(request):
             else:
                 user.username = new_username
 
-        # Handle name and bio updates
+        
         user.first_name, user.last_name = new_name.split(' ', 1)
         user.bio = new_bio
         user.save()
@@ -376,14 +376,11 @@ def profile_update(request):
 def get_suggested_usernames(current_username):
     """Generate a list of suggested usernames."""
     suggested_usernames = []
-    for _ in range(5):  # Generate 5 suggestions
+    for _ in range(5): 
         suggestion = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
         if not CustomUser.objects.filter(username=suggestion).exists() and suggestion != current_username:
             suggested_usernames.append(suggestion)
     return suggested_usernames
-
-
-
 
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -482,62 +479,6 @@ def add_reply(request, comment_id):
 
 
 
-# from django.shortcuts import render, redirect, get_object_or_404
-# from django.contrib.auth.decorators import login_required
-# from django.contrib import messages
-# from .models import FriendRequest, CustomUser
-
-# @login_required
-# def send_friend_request(request, user_id):
-#     """Send a friend request to another user"""
-#     receiver = get_object_or_404(CustomUser, id=user_id)
-#     sender = request.user
-
-#     # Check if the user is trying to send a request to themselves
-#     if sender == receiver:
-#         messages.error(request, "You cannot send a friend request to yourself.")
-#         return redirect('profile', user_id=user_id)
-
-#     # Check if a friend request already exists
-#     existing_request = FriendRequest.objects.filter(sender=sender, receiver=receiver, is_active=True)
-#     if existing_request.exists():
-#         messages.error(request, "You have already sent a friend request.")
-#     else:
-#         FriendRequest.objects.create(sender=sender, receiver=receiver)
-#         messages.success(request, "Friend request sent successfully.")
-    
-#     return redirect('profile', user_id=user_id)
-
-
-# @login_required
-# def accept_friend_request(request, request_id):
-#     """Accept a pending friend request"""
-#     friend_request = get_object_or_404(FriendRequest, id=request_id)
-
-#     # Ensure the receiver is the logged-in user
-#     if friend_request.receiver == request.user:
-#         friend_request.accept()
-#         messages.success(request, "Friend request accepted.")
-#     else:
-#         messages.error(request, "You cannot accept this friend request.")
-
-#     return redirect('friend_requests')  # Redirect to the friend requests page
-
-
-# @login_required
-# def friend_requests(request):
-#     """Display all pending friend requests"""
-#     user = request.user
-#     received_requests = FriendRequest.objects.filter(receiver=user, is_active=True)
-#     sent_requests = FriendRequest.objects.filter(sender=user, is_active=True)
-
-#     context = {
-#         'received_requests': received_requests,
-#         'sent_requests': sent_requests,
-#     }
-#     return render(request, 'friend_requests.html', context)
-
-
 from django.core.paginator import Paginator
 def user_search(request):
     query = request.GET.get('q', '')  # Get the query parameter from the request
@@ -566,30 +507,6 @@ from django.contrib.auth import get_user_model
 from .models import Post
 
 User = get_user_model()
-
-# def user_profile_view(request, username):
-#     user = get_object_or_404(User, username=username)
-#     posts = Post.objects.filter(user=user)
-
-#     if request.method == 'POST':
-#         caption = request.POST.get('caption')
-#         image = request.FILES.get('image')
-#         location = request.POST.get('location')
-
-#         if caption and image:
-#             Post.objects.create(
-#                 user=request.user,
-#                 caption=caption,
-#                 image=image,
-#                 location=location
-#             )
-#             return redirect('user_profile_view', username=username)
-
-#     return render(request, 'profile_view.html', {
-#         'user': user,
-#         'posts': posts,
-#     })
-
 
 
 
@@ -647,9 +564,9 @@ def my_profile_view(request, username):
     
     # Fetch counts for followers and following
     followers_count = Friendship.objects.filter(user2=user_profile).count()  # Count of followers
-    following_count = Friendship.objects.filter(user1=user_profile).count()  # Count of following
+    following_count = Friendship.objects.filter(user1=user_profile).count()  
 
-    # Context to pass to the template
+    
     context = {
         'user': user_profile,
         'posts': user_posts,
