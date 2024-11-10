@@ -14,7 +14,7 @@ urlpatterns = [
     path('forgot_password',views.forgot_password,name="forgot_password"),
     path('verify_reset_otp/', views.verify_reset_otp, name='verify_reset_otp'),
     path('reset_password/', views.reset_password, name='reset_password'),
-    
+    path('reported-posts/', views.reported_posts, name='reported_posts'),
     path('profile_update', views.profile_update, name='profile_update'),
     path('create_post/', views.create_post, name='create_post'),
     path('post/<int:post_id>/', views.post_detail, name='post_detail'),
@@ -35,7 +35,7 @@ urlpatterns = [
     path('settings/privacy/', views.privacy_settings, name='privacy_settings'),
     path('reply/<int:comment_id>/', views.add_reply, name='add_reply'),
      path('conversations/', views.conversation_list, name='conversation_list'),
-    
+    path('report/<int:post_id>/', views.report_post, name='report_post'),
     path('conversations/start/<int:user_id>/', views.start_conversation, name='start_conversation'),
     path('send-message/<int:recipient_id>/', views.send_message, name='send_message'),
     # pattern for conversation details

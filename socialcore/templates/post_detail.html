@@ -20,7 +20,8 @@
             </div>
         </div>
 
-        <!-- 3-dot Options Dropdown for Edit/Delete -->
+        <!-- 3-dot Options Dropdown for Edit/Delete/Report -->
+        {% if post.user == request.user %}
         <div class="post-options" style="position: relative;">
             <button onclick="toggleDropdown()" class="btn btn-secondary btn-sm" style="border: none; background: black; font-size: 24px; cursor: pointer;">&#x22EE;</button>
             <ul id="dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; list-style: none; padding: 0; margin: 0; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);">
@@ -28,11 +29,18 @@
                 <li><a href="{% url 'delete_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Delete Post</a></li>
             </ul>
         </div>
+        {% else %}
+        <div class="post-options" style="position: relative;">
+            <button onclick="toggleDropdown()" class="btn btn-secondary btn-sm" style="border: none; background: black; font-size: 24px; cursor: pointer;">&#x22EE;</button>
+            <ul id="dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; list-style: none; padding: 0; margin: 0; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);">
+                <li><a href="{% url 'report_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Report Post</a></li>
+            </ul>
+        </div>
+        {% endif %}
         
     </div>
 
     <!-- Post Caption and Image -->
-   
     <div style="width: 100%; background-color: #f0f0f0; border-radius: 10px; overflow: hidden; display: flex; justify-content: center;">
         <img src="{{ post.image.url }}" alt="Post image" style="max-width: 50%; height: auto; display: block; margin: 0 auto;">
     </div>

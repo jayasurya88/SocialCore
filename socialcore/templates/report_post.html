@@ -1,0 +1,36 @@
+
+
+{% block title %}Report Post{% endblock %}
+
+{% block content %}
+<div class="report-post-container" style="max-width: 800px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
+    <h2>Report Post</h2>
+    <p><strong>Post:</strong> {{ post.user.username }}'s Post</p>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <label for="reason">Reason for Reporting:</label>
+        <select name="reason" id="reason" required style="width: 100%; padding: 10px; margin-bottom: 20px;">
+            <option value="">Select a reason</option>
+            <option value="spam">Spam</option>
+            <option value="harassment">Harassment</option>
+            <option value="inappropriate">Inappropriate Content</option>
+            <option value="misleading">Misleading Information</option>
+            <option value="hate_speech">Hate Speech</option>
+            <option value="violence">Violence or Threats</option>
+            <option value="other">Other</option>
+        </select>
+
+        <button type="submit" style="padding: 10px 20px; background-color: #e74c3c; color: white; border: none; cursor: pointer; border-radius: 5px;">
+            Report Post
+        </button>
+    </form>
+
+    <div class="report-info" style="margin-top: 20px;">
+        <h4>Important:</h4>
+        <p>Your report will be reviewed by an administrator. If the post violates our guidelines, appropriate action will be taken.</p>
+    </div>
+</div>
+
+{% endblock %}

@@ -187,9 +187,41 @@ def login_view(request):
             messages.error(request, 'User not found. Please try again.')
 
     return render(request, 'login.html')
+from django.utils import timezone
+from django.shortcuts import render
+from datetime import timedelta
+from django.shortcuts import render
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth import get_user_model
+from .models import Post
 
 def admin(request):
-    return render(request,'admin.html')
+    # Time threshold for active users (30 days)
+    active_threshold = timezone.now() - timedelta(days=30)
+    
+    # Get active users based on last_login
+    active_users_count = get_user_model().objects.filter(last_login__gte=active_threshold).count()
+    
+    # Time threshold for posts (last 24 hours)
+    post_threshold = timezone.now() - timedelta(days=1)
+    
+    # Get the count of posts created in the last 24 hours
+    total_posts_count = Post.objects.filter(created_at__gte=post_threshold).count()
+
+    # Optionally, calculate the percentage of posts made in the last 24 hours relative to all-time posts
+    total_posts_all_time = Post.objects.count()
+    if total_posts_all_time > 0:
+        post_percentage = (total_posts_count / total_posts_all_time) * 100
+    else:
+        post_percentage = 0
+
+    return render(request, 'admin.html', {
+        'active_users_count': active_users_count,
+        'total_posts_count': total_posts_count,
+        'post_percentage': post_percentage,
+    })
+
 
 
 def forgot_password(request):
@@ -782,3 +814,61 @@ def delete_post(request, post_id):
         return redirect("my_profile_view", username=request.user.username)  # Pass the username here
 
     return render(request, "delete_post.html", {"post": post})
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Report, Post
+
+@login_required
+def report_post(request, post_id):
+    post = Post.objects.get(id=post_id)  # Get the post being reported
+
+    if request.method == 'POST':
+        reason = request.POST.get('reason')  # Retrieve selected reason from form
+
+        # If a reason is selected, save the report to the database
+        if reason:
+            report = Report(user=request.user, post=post, reason=reason)
+            report.save()
+            messages.success(request, "Your report has been submitted successfully.")
+            return redirect('post_detail', post_id=post.id)
+        else:
+            messages.error(request, "Please select a reason for reporting the post.")  # If no reason selected
+
+    return render(request, 'report_post.html', {'post': post})
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from .models import Report, Post
+
+ # Only allow superusers
+def reported_posts(request):
+    # Fetch all posts that have been reported (distinct posts)
+    reported_posts = Post.objects.filter(report__isnull=False).distinct()
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        post_id = request.POST.get('post_id')
+        post = get_object_or_404(Post, id=post_id)
+
+        if action == 'delete_post':
+            # Delete the post and all associated reports
+            post.delete()
+            messages.success(request, f"Post {post.id} has been deleted.")
+        elif action == 'ignore_report':
+            # Ignore the first report (mark as ignored in Report model)
+            report_id = request.POST.get('report_id')
+            report = get_object_or_404(Report, id=report_id)
+            report.ignored = True
+            report.save()
+            messages.success(request, f"Report for Post {post.id} has been ignored.")
+        
+        return redirect('reported_posts')  # Redirect to the same page to see the updated status
+
+    return render(request, 'reported_posts.html', {
+        'reported_posts': reported_posts,
+    })

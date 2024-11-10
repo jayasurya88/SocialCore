@@ -136,3 +136,32 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message from {self.sender.username} at {self.timestamp}"
+    
+
+
+from django.db import models
+from django.contrib.auth.models import User
+from .models import Post  # Assuming Post model is in the same app
+
+from django.conf import settings
+from django.db import models
+
+class Report(models.Model):
+    # Define the choices for the report reasons
+    REASON_CHOICES = [
+        ('spam', 'Spam'),
+        ('harassment', 'Harassment'),
+        ('inappropriate', 'Inappropriate Content'),
+        ('misleading', 'Misleading Information'),
+        ('hate_speech', 'Hate Speech'),
+        ('violence', 'Violence or Threats'),
+        ('other', 'Other')
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE)
+    reason = models.CharField(max_length=20, choices=REASON_CHOICES)  # Use choices here
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report by {self.user} on {self.post.caption[:50]}"

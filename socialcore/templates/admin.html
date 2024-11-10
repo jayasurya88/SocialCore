@@ -52,10 +52,10 @@
             <span class="material-icons-sharp"> inventory </span>
             <h3>Products</h3>
           </a>
-          <a href="#">
-            <span class="material-icons-sharp"> report_gmailerrorred </span>
+          <a href="{% url 'reported_posts' %}">
+            <span class="material-icons-sharp">report_gmailerrorred</span>
             <h3>Reports</h3>
-          </a>
+        </a>
           <a href="#">
             <span class="material-icons-sharp"> settings </span>
             <h3>Settings</h3>
@@ -80,44 +80,39 @@
 
         <div class="insights">
           <!-- SALES -->
-          <div class="sales">
-            <span class="material-icons-sharp"> analytics </span>
-            <div class="middle">
-              <div class="left">
-                <h3>Total Sales</h3>
-                <h1>$25,024</h1>
-              </div>
-              <div class="progress">
-                <svg>
-                  <circle cx="38" cy="38" r="36"></circle>
-                </svg>
-                <div class="number">
-                  <p>81%</p>
-                </div>
-              </div>
-            </div>
-            <small class="text-muted"> Last 24 hours </small>
-          </div>
+          
 
           <!-- EXPENSES -->
-          <div class="expenses">
+          <div class="active-users">
+            <span class="material-icons-sharp"> group </span>
+            <div class="middle">
+                <div class="left">
+                    <h3>Total Active Users</h3>
+                    <h1>{{ active_users_count }}</h1> <!-- Active users count -->
+                </div>
+            </div>
+            <small class="text-muted"> Active in the last 30 days </small>
+        </div>
+        
+        <div class="expenses">
             <span class="material-icons-sharp"> bar_chart </span>
             <div class="middle">
-              <div class="left">
-                <h3>Total Expenses</h3>
-                <h1>$14,160</h1>
-              </div>
-              <div class="progress">
-                <svg>
-                  <circle cx="38" cy="38" r="36"></circle>
-                </svg>
-                <div class="number">
-                  <p>62%</p>
+                <div class="left">
+                    <h3>Total Posts</h3>
+                    <h1>{{ total_posts_count }}</h1> <!-- Total posts count in the last 24 hours -->
                 </div>
-              </div>
+                <div class="progress">
+                    <svg>
+                        <circle cx="38" cy="38" r="36"></circle>
+                    </svg>
+                    <div class="number">
+                        <p>{{ post_percentage|floatformat:2 }}%</p> <!-- Percentage of posts in the last 24 hours -->
+                    </div>
+                </div>
             </div>
             <small class="text-muted"> Last 24 hours </small>
-          </div>
+        </div>
+        
 
           <!-- INCOME -->
           <div class="income">
