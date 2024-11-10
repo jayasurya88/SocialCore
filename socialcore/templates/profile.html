@@ -36,7 +36,12 @@
                             <p class="text-muted ms-3">You are friends with {{ user.username }}.</p>
                         {% endif %}
                         <!-- Send Message Button -->
-                        <a href="{% url 'conversation_detail' conversation_id %}" class="btn btn-outline-secondary ms-3">Send Message</a>
+                        {% if conversation_id %}
+    <a href="{% url 'conversation_detail' conversation_id %}" class="btn btn-outline-secondary ms-3">Send Message</a>
+{% else %}
+    <a href="{% url 'start_conversation' user.id %}" class="btn btn-outline-secondary ms-3">Send Message</a>
+{% endif %}
+
 
                     {% endif %}
                 </div>

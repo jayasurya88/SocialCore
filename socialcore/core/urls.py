@@ -40,4 +40,6 @@ urlpatterns = [
     path('send-message/<int:recipient_id>/', views.send_message, name='send_message'),
     # pattern for conversation details
     path('conversations/<int:conversation_id>/', views.conversation_detail, name='conversation_detail'),
+    path("post/<int:post_id>/edit/", views.edit_post, name="edit_post"),
+    path("post/<int:post_id>/delete/", views.delete_post, name="delete_post"),
 ]

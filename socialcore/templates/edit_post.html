@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Post{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: auto; padding: 20px; background-color: #fff; border-radius: 8px;">
+   
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Caption Field -->
+        <div class="form-group">
+            <label for="caption">Caption</label>
+            <textarea id="caption" name="caption" class="form-control" rows="3">{{ post.caption }}</textarea>
+        </div>
+
+        <!-- Location Field -->
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" class="form-control" value="{{ post.location }}">
+        </div>
+
+        <!-- Image Field -->
+       
+
+        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+        <a href="{% url 'post_detail' post.id %}" class="btn btn-secondary mt-3">Cancel</a>
+    </form>
+</div>
+{% endblock %}

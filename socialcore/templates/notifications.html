@@ -1,19 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifications</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="mb-4">Notifications</h1>
-        
-        <h2>Friend Requests</h2>
-        <ul class="list-group mb-4">
+{% extends 'base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 800px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; text-align: left;">
+
+    <!-- Friend Requests Section -->
+    {% if received_requests %}
+        <div class="mb-4">
             {% for request in received_requests %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="notification-item" style="width: 100%; padding: 15px; border-bottom: 1px solid #ddd;">
                     <strong>{{ request.from_user.username }}</strong> wants to be your friend.
                     <div>
                         <form action="{% url 'accept_friend_request' request.id %}" method="POST" style="display:inline;">
@@ -25,34 +21,46 @@
                             <button type="submit" class="btn btn-danger btn-sm">Reject</button>
                         </form>
                     </div>
-                </li>
-            {% empty %}
-                <li class="list-group-item">No new friend requests.</li>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
+    {% endif %}
 
-        <h2>Post Notifications</h2>
-        <ul class="list-group">
+    <!-- Like Notifications Section -->
+    {% if notifications %}
+        <div class="mb-4">
             {% for notification in notifications %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {% if not notification.is_read %}
-                        <strong class="text-primary">New:</strong>
-                    {% endif %}
-                    <strong>{{ notification.from_user.username }}</strong>  <!-- The user who triggered the notification -->
-                    {% if notification.notification_type == 'like' %}
-                        liked your post: "{{ notification.post.caption }}"
-                    {% elif notification.notification_type == 'liked_you' %}
-                        liked you!
-                    {% elif notification.notification_type == 'comment' %}
-                        commented on your post: "{{ notification.post.caption }}"
-                    {% endif %}
-                    <small class="text-muted">{{ notification.created_at|date:"F j, Y, g:i a" }}</small>
-                </li>
-            {% empty %}
-                <li class="list-group-item">No new post notifications.</li>
+                {% if notification.notification_type == 'like' %}
+                    <div class="notification-item" style="width: 100%; padding: 15px; border-bottom: 1px solid #ddd;">
+                        {% if not notification.is_read %}
+                            <strong class="text-primary">New:</strong>
+                        {% endif %}
+                        <strong>{{ notification.from_user.username }}</strong> liked your post: "<em>{{ notification.post.caption }}</em>"
+                        <small class="text-muted">{{ notification.created_at|date:"F j, Y, g:i a" }}</small>
+                    </div>
+                {% endif %}
             {% endfor %}
-        </ul>
+        </div>
+    {% endif %}
 
-    </div>
-</body>
-</html>
+    <br> <!-- Added break after like notifications -->
+
+    <!-- Comment Notifications Section -->
+    {% if notifications %}
+        <div class="mb-4">
+            {% for notification in notifications %}
+                {% if notification.notification_type == 'comment' %}
+                    <div class="notification-item" style="width: 100%; padding: 15px; border-bottom: 1px solid #ddd;">
+                        {% if not notification.is_read %}
+                            <strong class="text-primary">New:</strong>
+                        {% endif %}
+                        <strong>{{ notification.from_user.username }}</strong> commented on your post: "<em>{{ notification.post.caption }}</em>"
+                        <small class="text-muted">{{ notification.created_at|date:"F j, Y, g:i a" }}</small>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

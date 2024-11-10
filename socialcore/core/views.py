@@ -41,11 +41,6 @@ def login_page(request):
 
 
 User = get_user_model()
-
-
-
-
-
 def register(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -289,41 +284,22 @@ from django.db.models import Q
 from .models import CustomUser, Friendship, Post, FriendRequest
 
 def profile_view(request, username):
-    # Fetch the user profile based on the username
     user_profile = get_object_or_404(CustomUser, username=username)
-
-    # Determine if the logged-in user is accessing their own profile
     is_own_profile = request.user == user_profile
-
-    # Check if the logged-in user follows the profile user
     is_following = Friendship.objects.filter(user1=request.user, user2=user_profile).exists()
-
-    # Check if the profile user follows back
     is_followed_by_profile = Friendship.objects.filter(user1=user_profile, user2=request.user).exists()
-
-    # Determine friendship status (both users follow each other)
     are_friends = is_following and is_followed_by_profile
-
-    # Fetch posts based on profile visibility
     if is_own_profile:
-        # Show all posts for own profile
         user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
     elif user_profile.is_private and not is_following:
         user_posts = []
     else:
         user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
-
-    # Fetch counts for followers and following
     followers_count = Friendship.objects.filter(user2=user_profile).count()
     following_count = Friendship.objects.filter(user1=user_profile).count()
-
-    # Check if a friend request has been sent
     friend_request_sent = FriendRequest.objects.filter(from_user=request.user, to_user=user_profile).exists()
-
-    # Attempt to fetch an existing conversation between the users
     conversation = Conversation.objects.filter(participants=request.user).filter(participants=user_profile).first()
     conversation_id = conversation.id if conversation else None
-
     context = {
         'user': user_profile,
         'posts': user_posts,
@@ -331,11 +307,10 @@ def profile_view(request, username):
         'following_count': following_count,
         'are_friends': are_friends,
         'friend_request_sent': friend_request_sent,
-        'conversation_id': conversation_id,  # Pass conversation_id to context
+        'conversation_id': conversation_id, 
+          # Pass conversation_id to context
     }
-
     return render(request, 'profile.html', context)
-
 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -348,31 +323,22 @@ def profile_update(request):
     if request.method == 'POST':
         new_username = request.POST.get('username')
         new_name = request.POST.get('name')
-        new_bio = request.POST.get('bio')
-        
-       
+        new_bio = request.POST.get('bio')    
         if 'profile_picture' in request.FILES:
-            user.profile_picture = request.FILES['profile_picture']
-
-      
+            user.profile_picture = request.FILES['profile_picture']   
         if new_username and new_username != user.username:
             if CustomUser.objects.filter(username=new_username).exists():
                 messages.error(request, 'Username is already taken.')
                 return redirect('profile_update')
             else:
-                user.username = new_username
-
-        
+                user.username = new_username    
         user.first_name, user.last_name = new_name.split(' ', 1)
         user.bio = new_bio
         user.save()
-
         messages.success(request, 'Profile updated successfully!')
         return redirect('profile_view', username=user.username)
-
     suggested_usernames = get_suggested_usernames(user.username)
     return render(request, 'profile_update.html', {'user': user, 'suggested_usernames': suggested_usernames})
-
 def get_suggested_usernames(current_username):
     """Generate a list of suggested usernames."""
     suggested_usernames = []
@@ -381,16 +347,12 @@ def get_suggested_usernames(current_username):
         if not CustomUser.objects.filter(username=suggestion).exists() and suggestion != current_username:
             suggested_usernames.append(suggestion)
     return suggested_usernames
-
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Post, Comment
 from django.contrib.auth import get_user_model
-
 User = get_user_model()
-
 @login_required
 def create_post(request):
     if request.method == 'POST':
@@ -413,24 +375,17 @@ def add_comment(request, post_id):
 
         comment = Comment(post=post, user=request.user, text=text)
         comment.save()
-
-        # Create a notification for the post owner
-        if request.user != post.user:  # Prevent self-notification
+        if request.user != post.user: 
             Notification.objects.create(
                 user=post.user, 
-                from_user=request.user,  # Who made the comment
+                from_user=request.user,  
                 notification_type='comment', 
                 post=post
             )
-
         messages.success(request, 'Comment added successfully!')
         return redirect('post_detail', post_id=post.id)
     return redirect('post_detail', post_id=post_id)
-
-
 from .models import Notification
-
-
 @login_required
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -452,8 +407,6 @@ def like_post(request, post_id):
             )
 
     return redirect('post_detail', post_id=post_id)
-
-
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -481,22 +434,18 @@ def add_reply(request, comment_id):
 
 from django.core.paginator import Paginator
 def user_search(request):
-    query = request.GET.get('q', '')  # Get the query parameter from the request
-    users = User.objects.none()  # Initialize an empty queryset
+    query = request.GET.get('q', '')
+    users = User.objects.none()  
 
     if query:
-        # Search for users by username, first name, or last name
         users = User.objects.filter(
             Q(username__icontains=query) |
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query)
         )
-
-    # Implement pagination if needed (optional)
-    paginator = Paginator(users, 10)  # Show 10 users per page
+    paginator = Paginator(users, 10)  
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
     return render(request, 'user_search.html', {
         'query': query,
         'page_obj': page_obj,
@@ -505,37 +454,24 @@ def user_search(request):
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import get_user_model
 from .models import Post
-
 User = get_user_model()
-
-
-
 def user_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
-
-    # Check if the profile is private
     is_private_profile = user.is_private
-
-    # Check if the logged-in user is friends with this user
     is_friend = Friendship.objects.filter(user1=user, user2=request.user).exists() or \
                 Friendship.objects.filter(user1=request.user, user2=user).exists()
-
-    # Fetch friend requests related to this user (for the logged-in user)
     friend_requests = FriendRequest.objects.filter(to_user=user)
-
-    # Fetch user posts based on profile visibility
     if not is_private_profile or is_friend:
-        # If the profile is public or the user is a friend, fetch posts
         posts = Post.objects.filter(author=user)
     else:
-        # If the profile is private and the user is not a friend
-        posts = []  # No posts can be viewed
+        posts = []
 
     context = {
         'user': user,
         'friend_requests': friend_requests,
         'posts': posts,
         'is_friend': is_friend,
+
     }
 
     return render(request, 'core/user_profile.html', context)
@@ -543,30 +479,21 @@ def user_profile(request, user_id):
 
 
 from django.shortcuts import render, get_object_or_404
-from .models import CustomUser, Post, Friendship  # Ensure your models are imported
+from .models import CustomUser, Post, Friendship  
 from django.contrib.auth.decorators import login_required
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 
 @login_required
 def my_profile_view(request, username):
-    # Fetch the user by their username
+
     user_profile = get_object_or_404(CustomUser, username=username)
-
-    # Check if the logged-in user is accessing their own profile
-    if request.user != user_profile:
-        # Redirect to the logged-in user's profile if they try to access someone else's profile
-        return redirect('my_profile_view', username=request.user.username)
-
-    # Fetch all the posts of the user
+    if request.user != user_profile:      
+        return redirect('my_profile_view', username=request.user.username) 
     user_posts = Post.objects.filter(user=user_profile).order_by('-created_at')
     
-    # Fetch counts for followers and following
-    followers_count = Friendship.objects.filter(user2=user_profile).count()  # Count of followers
+    followers_count = Friendship.objects.filter(user2=user_profile).count()  
     following_count = Friendship.objects.filter(user1=user_profile).count()  
-
-    
     context = {
         'user': user_profile,
         'posts': user_posts,
@@ -583,13 +510,8 @@ def my_profile_view(request, username):
 from django.contrib.auth import logout
 
 def custom_logout(request):
-    logout(request)  # Log out the user
+    logout(request)  
     return redirect('login_view')
-
-
-
-
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -725,11 +647,8 @@ def privacy_settings(request):
         is_private = request.POST.get('is_private') == 'on'
         user.is_private = is_private  # Set the value for 'is_private'
         user.save()  # Save the updated privacy setting
-        
-        # Redirect to the user's profile page using their username
-        return redirect('my_profile_view', username=user.username)
 
-    # Render the form with the current privacy setting
+        return redirect('my_profile_view', username=user.username)
     return render(request, 'privacy_settings.html', {'is_private': user.is_private})
 
 
@@ -824,3 +743,42 @@ def send_message(request, recipient_id):
         'conversation': conversation,
         'messages': messages,
     })
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Post
+
+@login_required
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, user=request.user)
+
+    if request.method == "POST":
+        caption = request.POST.get("caption", post.caption)
+        location = request.POST.get("location", post.location)
+        image = request.FILES.get("image", post.image)
+
+        # Update post fields
+        post.caption = caption
+        post.location = location
+        if image:
+            post.image = image  # Only update image if a new one was uploaded
+        post.save()
+
+        messages.success(request, "Post updated successfully.")
+        return redirect("post_detail", post_id=post.id)
+
+    return render(request, "edit_post.html", {"post": post})
+
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, user=request.user)
+
+    if request.method == "POST":
+        post.delete()
+        messages.success(request, "Post deleted successfully.")
+        return redirect("my_profile_view", username=request.user.username)  # Pass the username here
+
+    return render(request, "delete_post.html", {"post": post})
