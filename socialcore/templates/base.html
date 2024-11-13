@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
    <!-- CSS -->
-<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
 
     <!-- Unicons CSS -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
@@ -171,7 +171,7 @@
                     <a class="menu-item">
                         <span><i class="uil uil-chart-line"></i></span><h3>Analytics</h3>
                     </a>
-                    <a class="menu-item" id="theme">
+                    <a class="menu-item" id="theme open-theme-modal">
                         <span><i class="uil uil-palette"></i></span><h3>Theme</h3>
                     </a>
                     <a class="menu-item"  href="{% url 'privacy_settings' %}">
@@ -193,7 +193,7 @@
         </div>
     </main>
     
-    <div class="customize-theme">
+    <  <div class="customize-theme">
         <div class="card">
             <h2>Customize your view</h2>
             <p class="text-muted">Manage your font size, color, and background.</p>
@@ -233,15 +233,15 @@
                 <div class="choose-bg">
                     <div class="bg-1 active">
                         <span></span>
-                        <h5>Light</h5>
+                        <h5 for="bg-1">Light</h5>
                     </div>
                     <div class="bg-2">
                         <span></span>
-                        <h5>Dim</h5>
+                        <h5>Dim</h5> <!--  for="bg-2" -->
                     </div>
                     <div class="bg-3">
                         <span></span>
-                        <h5>Lights out</h5>
+                        <h5 for="bg-3">Lights out</h5>
                     </div>
                 </div>
             </div>
@@ -249,16 +249,18 @@
         </div>
     </div>
 
-    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'main.js' %}"></script>
     <!-- JavaScript -->
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
 
     <!-- Bootstrap JS -->
      
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlCA9+zURbN+hFfNQ==" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-czkwNiOc7x/CrvvU46vFJ65ekER7iHg5Qg==" crossorigin="anonymous"></script>
     {% block extra_js %}
-   
+   <script>
+
+   </script>
     {% endblock %}
 </body>
 </html>

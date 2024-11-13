@@ -24,7 +24,9 @@ urlpatterns = [
     path('profile/<str:username>/', views.profile_view, name='profile_view'),
     path('my_profile/<str:username>/', views.my_profile_view, name='my_profile_view'),
     path('search/', views.user_search, name='user_search'),
-    
+    path('user_management_view/', views.user_management_view, name='user_management_view'),
+    path('user-management/delete/<int:user_id>/', views.delete_user_view, name='delete_user'),
+
     path('notifications/',views. notifications, name='notifications'),
     path('logout/', views.custom_logout, name='custom_logout'),
     path('send-friend-request/<int:user_id>/', views.send_friend_request, name='send_friend_request'),

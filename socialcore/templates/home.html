@@ -54,6 +54,17 @@
     <title>Social Media Clone</title>
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Qwitcher+Grypen:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .log{
+            font-family: "Qwitcher Grypen", cursive;
+            font-weight: 700;
+            font-style: normal;
+            font-size: 40px;
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -71,6 +82,14 @@
                     <img src="{{ user.profile_picture.url }}" alt="User Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
                 </a>
                 <a href="{% url 'create_post' %}" class="btn btn-primary">Create New Post</a>
+            
+                {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'custom_logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Logout</button>
+                </form>
+            {% endif %}
+            
             </div>
             
         </div>
@@ -98,7 +117,7 @@
                     <a class="menu-item">
                         <span><i class="uil uil-compass"></i></span><h3>Explore</h3>
                     </a>
-                    <a class="menu-item" id="Notifications">
+                    <a class="menu-item" id="Notifications" href="{% url 'notifications' %}">
                         <span><i class="uil uil-bell"><small class="notification-count">{{ notifications.count }}</small></i></span>
                         <h3>Notifications</h3>
                         <!-- Notification popup -->

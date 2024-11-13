@@ -65,6 +65,7 @@ messagesNotification.addEventListener('click',()=> {
 
 //  ----- ThemeModel -----
 const openThemeModel = ()=>{
+    console.log("Opened!")
     themeModal.style.display = 'grid';
 }
 

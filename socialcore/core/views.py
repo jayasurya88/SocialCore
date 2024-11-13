@@ -466,8 +466,9 @@ def add_reply(request, comment_id):
 
 from django.core.paginator import Paginator
 def user_search(request):
+    User = get_user_model()  # Get the custom user model
     query = request.GET.get('q', '')
-    users = User.objects.none()  
+    users = User.objects.none()
 
     if query:
         users = User.objects.filter(
@@ -475,14 +476,15 @@ def user_search(request):
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query)
         )
-    paginator = Paginator(users, 10)  
+    
+    paginator = Paginator(users, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
     return render(request, 'user_search.html', {
         'query': query,
         'page_obj': page_obj,
     })
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import get_user_model
 from .models import Post
@@ -872,3 +874,19 @@ def reported_posts(request):
     return render(request, 'reported_posts.html', {
         'reported_posts': reported_posts,
     })
+
+User = get_user_model()
+def user_management_view(request):
+    users = User.objects.all()
+    return render(request, 'admin_user_management.html', {'users': users})
+
+
+
+def delete_user_view(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, 'User deleted successfully.')
+        return redirect('user_management_view')
+
+    return render(request, 'confirm_delete.html', {'user': user})

@@ -65,10 +65,12 @@ messagesNotification.addEventListener('click',()=> {
 
 //  ----- ThemeModel -----
 const openThemeModel = ()=>{
+    console.log("Opened!");
     themeModal.style.display = 'grid';
 }
 
 const closeThemeModal = (e)=>{
+    console.log("closed")
     if(e.target.classList.contains('customize-theme')){
         themeModal.style.display = 'none';
     }
