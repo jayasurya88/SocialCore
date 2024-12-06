@@ -11,20 +11,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Qwitcher+Grypen:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        .log{
-            font-family: "Qwitcher Grypen", cursive;
-            font-weight: 700;
-            font-style: normal;
-            font-size: 40px;
-        }
+        
     </style>
 </head>
 <body>
     <nav>
         <div class="container">
-            <h2 class="log">
-                SocialCore
-            </h2>
+            <a href="{% url 'index' %}" class="log-btn" style="text-decoration: none;">
+                <h2 class="log" style="font-size: 45px;">
+                    SocialCore
+                </h2>
+            </a>
             <div class="search-bar">
                 <i class="uil uil-search"></i>
                 <input type="search" placeholder="search for creators, inspirations, and projects">

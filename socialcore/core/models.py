@@ -141,7 +141,7 @@ class Message(models.Model):
 
 from django.db import models
 from django.contrib.auth.models import User
-from .models import Post  # Assuming Post model is in the same app
+from .models import Post  
 
 from django.conf import settings
 from django.db import models

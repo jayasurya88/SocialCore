@@ -1,107 +1,226 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
-    <!-- Link to Bootstrap for styling -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Register - SocialCore</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Qwitcher+Grypen:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *{
+            scrollbar-width: none;
+        }
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: var(--color-light);
+        }
+
+        .auth-card {
+            background: var(--color-white);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .auth-card h2 {
+            color: var(--color-dark);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .auth-card p {
+            color: var(--color-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-card .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .auth-card label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--color-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-card input {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid var(--color-gray);
+            font-size: 0.9rem;
+            color: var(--color-dark);
+            background: var(--color-light);
+        }
+
+        .auth-card input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .auth-card button {
+            width: 100%;
+            padding: var(--btn-padding);
+            background: var(--color-primary);
+            color: var(--color-white);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .auth-card button:hover {
+            background: var(--color-dark);
+        }
+
+        .auth-card .form-links {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .auth-card .form-links a {
+            color: var(--color-primary);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .auth-card .form-links a:hover {
+            text-decoration: underline;
+        }
+
+        .messages {
+            margin-bottom: 1rem;
+        }
+
+        .messages .message {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--border-radious);
+            font-size: 0.9rem;
+        }
+
+        .messages .message.success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .messages .message.error {
+            background: var(--color-danger);
+            color: white;
+        }
+
+        .messages .message.info {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .messages .message.warning {
+            background: hsl(45, 95%, 65%);
+            color: white;
+        }
+
+        .auth-card input {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid var(--color-gray);
+            text-align: center;
+            color: var(--color-dark);
+            background: var(--color-light);
+            font-size: 1rem;
+            border-radius: 5px;
+        }
+
+    
+
+
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-6">
-                <h2 class="text-center">Register</h2>
+    <nav>
+        <div class="container">
+            <a href="{% url 'index' %}" class="log-btn" style="text-decoration: none;">
+                <h2 class="log" style="font-size: 45px;">
+                    SocialCore
+                </h2>
+            </a>
+            <div class="create">
+                <a class="btn btn-primary" href="{% url 'login_page' %}">Login</a>
+                <a class="btn btn-primary" href="{% url 'user_registration' %}">Signup</a>
+            </div>
+        </div>
+    </nav>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2 style="text-align: center;">Create Your Account</h2>
 
-                <!-- Django messages to display errors or success -->
-                {% if messages %}
-                    <div>
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                <!-- Display JavaScript error messages -->
-                <div id="passwordError" class="alert alert-danger" style="display:none;"></div>
-
-                <form id="registrationForm" method="POST" action="{% url 'register' %}">
-                    <!-- CSRF token for security in Django forms -->
-                    {% csrf_token %}
-
-                    <!-- Username field -->
-                    <div class="form-group">
-                        <label for="username">Username:</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-
-                    <!-- Email field -->
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-
-                    <!-- First Name field -->
-                    <div class="form-group">
-                        <label for="first_name">First Name:</label>
-                        <input type="text" class="form-control" id="first_name" name="first_name" required>
-                    </div>
-
-                    <!-- Last Name field -->
-                    <div class="form-group">
-                        <label for="last_name">Last Name:</label>
-                        <input type="text" class="form-control" id="last_name" name="last_name" required>
-                    </div>
-
-                    <!-- Phone field -->
-                    <div class="form-group">
-                        <label for="phone">Phone:</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}">
-                    </div>
-
-                    <!-- Password field -->
-                    <div class="form-group">
-                        <label for="password1">Password:</label>
-                        <input type="password" class="form-control" id="password1" name="password1" required>
-                    </div>
-
-                    <!-- Confirm Password field -->
-                    <div class="form-group">
-                        <label for="password2">Confirm Password:</label>
-                        <input type="password" class="form-control" id="password2" name="password2" required>
-                    </div>
-
-                    <!-- Submit button -->
-                    <div class="form-group text-center">
-                        <button type="submit" class="btn btn-primary">Register</button>
-                    </div>
-                </form>
-
-                <!-- Link to login page -->
-                <div class="text-center mt-3">
-                    Already have an account? <a href="{% url 'login_page' %}">Login here</a>
+            <!-- Messages Section -->
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
                 </div>
+            {% endif %}
+
+            <!-- Password Error Display -->
+            <div id="passwordError" class="messages">
+                <div class="message error" style="display: none;"></div>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="registrationForm" method="POST" action="{% url 'register' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="Enter your dmail" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="last_name" name="last_name" placeholder="Enter your last name" required>
+                </div>
+                <div class="form-group">
+                    
+                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" pattern="[0-9]{10}">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password1" name="password1" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password2" name="password2" placeholder="Confirm Password" required>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+
+            <div class="form-links">
+                Already have an account? <a href="{% url 'login_page' %}">Login here</a>
             </div>
         </div>
     </div>
 
-    <!-- Optional JavaScript for Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- JavaScript for password validation -->
+    <!-- JavaScript for Password Validation -->
     <script>
         const form = document.getElementById('registrationForm');
         const password1 = document.getElementById('password1');
         const password2 = document.getElementById('password2');
-        const passwordError = document.getElementById('passwordError');
+        const passwordError = document.querySelector('#passwordError .message');
 
         form.addEventListener('submit', function (event) {
-            // Regular expression to check if the password contains both letters and digits and is at least 6 characters long
             const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
-            // Check if the passwords match
             if (password1.value !== password2.value) {
                 passwordError.textContent = "Passwords do not match.";
                 passwordError.style.display = 'block';
@@ -109,7 +228,6 @@
                 return;
             }
 
-            // Check if the password meets the minimum requirements
             if (!regex.test(password1.value)) {
                 passwordError.textContent = "Password must be at least 6 characters long and contain both letters and digits.";
                 passwordError.style.display = 'block';
@@ -117,7 +235,6 @@
                 return;
             }
 
-            // If everything is okay, hide the error message
             passwordError.style.display = 'none';
         });
     </script>
