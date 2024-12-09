@@ -9,7 +9,7 @@
         {% for user in page_obj %}
             <li class="user-card">
                 <div class="profile-photo">
-                    <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                    <img src="{{ request.from_user.profile.profile_picture.url }}" alt="{{ user.username }}">
                 </div>
                 <div class="user-info">
                     <a href="{% url 'profile_view' username=user.username %}" class="username">{{ user.username }}</a>

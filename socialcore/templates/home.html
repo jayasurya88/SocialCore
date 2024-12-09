@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Media Clone</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -155,34 +157,39 @@
                                 {% endif %}
                             </div>
                     
-                            <div class="action-buttons">
-                                <div class="interaction-buttons">
-                                    <a href="{% url 'like_post' post.id %}">
+                            <!-- Updated Like Button in Feed -->
+                            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                                <form method="post" action="{% url 'toggle_like' post.id %}" class="like-form" id="like-form-{{ post.id }}">
+                                    {% csrf_token %}
+                                    <button type="submit" style="border: none; background: none; cursor: pointer;">
                                         {% if request.user in post.likes.all %}
-                                            <span><i class="uil uil-heart"></i></span>
+                                            <i class="fas fa-heart" style="color: #e74c3c; font-size: 24px;"></i>
                                         {% else %}
-                                            <span><i class="uil uil-heart"></i></span>
+                                            <i class="far fa-heart" style="color: #333; font-size: 24px;"></i>
                                         {% endif %}
-                                    </a>
-                                    <span><i class="uil uil-comment-dots"></i></span>
-                                    <span><i class="uil uil-share-alt"></i></span>
-                                </div>
-                                <div class="bookmark">
-                                    <span><i class="uil uil-bookmark-full"></i></span>
-                                </div>
+                                    </button>
+                                    <span class="like-count" id="like-count-{{ post.id }}">{{ post.likes.count }}</span> <!-- Display Like Count -->
+                                </form>
+                                
+                                <a href="#comment-form" style="text-decoration: none; color: #333;">
+                                    <i class="far fa-comment" style="font-size: 24px;"></i>
+                                </a> 
                             </div>
+                            
+
+                            
                     
-                            <div class="liked-by">
+                            <div class="liked-by" id="liked-by-{{ post.id }}">
                                 {% for like in post.likes.all|slice:":3" %}
-                                    <span><img src="{{ like.profile_picture.url }}"></span>
+                                    <span><img src="{{ like.profile_picture.url }}" alt="{{ like.username }}'s profile picture" style="width: 24px; height: 24px; border-radius: 50%;"></span>
                                 {% endfor %}
-                                <p>Liked by <b>{{ post.likes.first.username }}</b> and <b>{{ post.likes.count }} others</b></p>
+                                <p>Liked by <b>{{ post.likes.first.username }}</b> and <b>{{ post.likes.count }}</b> others</p>
                             </div>
                     
                             <div class="caption">
                                 <p><b>{{ post.user.username }}</b> {{ post.caption }} <span class="harsh-tag">#lifestyle</span></p>
                             </div>
-                    
+                            
                             <div class="comments text-muted">
                                 <h3>Comments</h3>
                                 <form method="post" action="{% url 'add_comment' post.id %}">
@@ -357,13 +364,16 @@
 
                         <div class="action-buttons">
                             <div class="interaction-buttons">
-                                <span><i class="uil uil-heart"></i></span>
-                                <span><i class="uil uil-comment-dots"></i></span>
-                                <span><i class="uil uil-share-alt"></i></span>
+                                <button class="like-btn" data-post-id="{{ post.id }}">
+                                    {% if request.user in post.likes.all %}
+                                        <i class="uil uil-heart-alt"></i>
+                                    {% else %}
+                                        <i class="uil uil-heart"></i>
+                                    {% endif %}
+                                </button>
+                                <span class="likes-count">{{ post.likes.count }}</span>
                             </div>
-                            <div class="bookmark">
-                                <span><i class="uil uil-bookmark-full"></i></span>
-                            </div>
+                            
                         </div>
 
                         <div class="liked-by">
@@ -471,52 +481,34 @@
                 
                 <!-- friend request -->
                 <div class="friend-requests">
-                    <h4>Requests</h4>
-                    <div class="request">
-                        <div class="info">
-                            <div class="profile-photo">
-                                <img src="{% static 'images/profile-12.jpg' %}" >
+                    <h4>Friend Requests</h4>
+                    
+                    <!-- Loop through received friend requests -->
+                    {% for request in received_requests %}
+                        <div class="request">
+                            <div class="info">
+                                <!-- Display sender's profile photo -->
+                                <div class="profile-photo">
+                                    <img src="{{ request.from_user.profile_picture.url }}" alt="{{ request.from_user.username }}'s Profile Photo" />
+
+                                </div>
+                                <div>
+                                    <h5 class="new_h4" >{{ request.from_user.username }}</h5>
+                                    <!-- Add logic to calculate mutual friends -->
+                                </div>
                             </div>
-                            <div>
-                                <h5>Hajia Bintu</h5>
-                                <p class="text-muted">5 mutual friends</p>
-                            </div>
-                        </div>
-                        <div class="action">
-                            <button class="btn btn-primary">Accept</button>
-                            <button class="btn">Decline</button>
-                        </div>
-                    </div>
-                    <div class="request">
-                        <div class="info">
-                            <div class="profile-photo">
-                                <img src="{% static 'images/profile-19.jpg' %}" >
-                            </div>
-                            <div>
-                                <h5>Jakline Mensa</h5>
-                                <p class="text-muted">8 mutual friends</p>
+                            <div class="action">
+                                <!-- Accept and Decline buttons with dynamic URLs -->
+                                <a href="{% url 'accept_friend_request' request.id %}" class="btn btn-primary">Accept</a>
+                                <a href="{% url 'reject_friend_request' request.id %}" class="btn" style="background-color: rgb(238, 70, 70);color: white;">Decline</a>
                             </div>
                         </div>
-                        <div class="action">
-                            <button class="btn btn-primary">Accept</button>
-                            <button class="btn">Decline</button>
-                        </div>
-                    </div>
-                    <div class="request">
-                        <div class="info">
-                            <div class="profile-photo">
-                                <img src="{% static 'images/profile-20.jpg' %}" >
-                            </div>
-                            <div>
-                                <h5>Mohou Sanol</h5>
-                                <p class="text-muted">3 mutual friends</p>
-                            </div>
-                        </div>
-                        <div class="action">
-                            <button class="btn btn-primary">Accept</button>
-                            <button class="btn">Decline</button>
-                        </div>
-                    </div>
+                    {% empty %}
+                        <p>No friend requests received.</p>
+                    {% endfor %}
+                    
+                    <!-- Loop through sent friend requests -->
+                    
                 </div>
             </div>
         </div>
@@ -579,7 +571,73 @@
 
         </div>
     </div>
+    <script>
+// Wait until the document is ready
+document.addEventListener("DOMContentLoaded", function() {
+    const likeForms = document.querySelectorAll('.like-form');
+    
+    likeForms.forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent page reload
 
+            const scrollPosition = window.scrollY;  // Save the current scroll position
+
+            // Get form data (including CSRF token)
+            const formData = new FormData(form);
+
+            // Extract post ID from the form action
+            const postId = form.action.split('/').pop();
+
+            // Send AJAX request to toggle like
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => response.json())  // Handle JSON response
+            .then(data => {
+                const likeButton = form.querySelector('button i');
+                const likeCountSpan = document.getElementById(`like-count-${postId}`);
+                const likedByDiv = document.getElementById(`liked-by-${postId}`);
+
+                // Toggle the like button color and icon
+                if (data.liked) {
+                    likeButton.classList.remove('far');
+                    likeButton.classList.add('fas');
+                    likeButton.style.color = '#e74c3c';  // Red color for liked posts
+                } else {
+                    likeButton.classList.remove('fas');
+                    likeButton.classList.add('far');
+                    likeButton.style.color = '#333';  // Default color for unliked posts
+                }
+
+                // Update the like count dynamically
+                likeCountSpan.textContent = data.like_count;
+
+                // Update the "Liked by" section dynamically
+                let likedByHtml = '';
+                data.likes.slice(0, 3).forEach(like => {
+                    likedByHtml += `<span><img src="${like.profile_picture}" alt="${like.username}'s profile picture" style="width: 24px; height: 24px; border-radius: 50%;"></span>`;
+                });
+
+                likedByHtml += `<p>Liked by <b>${data.first_like_user}</b> and <b>${data.like_count}</b> others</p>`;
+
+                likedByDiv.innerHTML = likedByHtml;
+
+                // Restore the scroll position after the update
+                window.scrollTo(0, scrollPosition);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+});
+
+    </script>
     <script src="{% static 'main.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 </html>

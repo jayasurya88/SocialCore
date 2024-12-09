@@ -14,6 +14,7 @@
     <!-- Unicons CSS -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/sample.css' %}">
+    <link rel="stylesheet" href="messages.css">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -162,7 +163,7 @@
                         </div>
                     </a>
                     
-                    <a class="menu-item" id="messages-notifications">
+                    <a class="menu-item" id="messages-notifications" href="{% url 'conversation_list' %}">
                         <span><i class="uil uil-envelope"><small class="notification-count" id="Messages-count">6</small></i></span><h3>Messages</h3>
                     </a>
                     <a class="menu-item">

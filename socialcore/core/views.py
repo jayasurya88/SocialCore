@@ -18,18 +18,27 @@ def index(request):
     return render(request,'index.html')
 
 
+
 def home(request):
     # Fetch all posts from users that the logged-in user follows
     following = Friendship.objects.filter(user1=request.user).values_list('user2', flat=True)
     posts = Post.objects.filter(user__in=following).order_by('-created_at')
-    
+
+    # Fetch received and sent friend requests
+    received_requests = FriendRequest.objects.filter(to_user=request.user)
+    sent_requests = FriendRequest.objects.filter(from_user=request.user)
+
     # Fetch the count of unread notifications
     unread_notifications_count = Notification.objects.filter(user=request.user, is_read=False).count()
 
+    # Pass the friend requests and other context variables to the template
     context = {
         'posts': posts,
+        'received_requests': received_requests,
+        'sent_requests': sent_requests,
         'unread_notifications_count': unread_notifications_count,  # Add this line
     }
+    
     return render(request, 'home.html', context)
 
 
@@ -439,7 +448,43 @@ def like_post(request, post_id):
             )
 
     return redirect('post_detail', post_id=post_id)
+from django.http import JsonResponse
+from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 
+def toggle_like(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    
+    # Toggle the like status
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        liked = True
+
+    # Get the updated like count
+    like_count = post.likes.count()
+
+    # Get the first user who liked the post (for "Liked by" display)
+    first_like_user = post.likes.first()
+
+    # Prepare the data for the "Liked by" section
+    likes_data = [
+        {
+            "username": like.username,
+            "profile_picture": like.profile_picture.url if hasattr(like, 'profile_picture') else ''
+        }
+        for like in post.likes.all()
+    ]
+
+    return JsonResponse({
+        'liked': liked,
+        'like_count': like_count,
+        'likes': likes_data,  # List of users who liked the post
+        'first_like_user': first_like_user.username if first_like_user else '',
+    })
+# Redirects to the home page if method isn't POST
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     return render(request, 'post_detail.html', {'post': post})
@@ -699,7 +744,7 @@ from .models import Conversation, Message, User
 def conversation_list(request):
     # Get all conversations the user is a part of
     conversations = request.user.conversations.all().order_by('-last_updated')
-    return render(request, 'messaging/conversation_list.html', {'conversations': conversations})
+    return render(request, 'conversation_list.html', {'conversations': conversations})
 
 @login_required
 def conversation_detail(request, conversation_id):

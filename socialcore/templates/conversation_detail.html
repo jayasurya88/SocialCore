@@ -1,16 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-4">
-    
-   
+<div class="container mt-4 custom-container">
 
-    <div class="messages mb-4" style="max-height: 400px; overflow-y: auto; border: 1px solid #dee2e6; padding: 10px; border-radius: 5px; margin-left: -30px;">  <!-- Increased negative margin-left -->
+    <!-- Messages Section -->
+    <div class="messages mb-4 custom-messages">
         {% for message in messages %}
             <div class="mb-2 {% if message.sender == request.user %}text-end{% else %}text-start{% endif %}">
                 <div class="d-flex justify-content-between">
                     <strong>{{ message.sender.username }}</strong>
-                    <small class="text-muted">{{ message.timestamp|date:"F j, Y, g:i a" }}</small>  <!-- Formatting the timestamp -->
+                    <small class="text-muted">{{ message.timestamp|date:"F j, Y, g:i a" }}</small>
                 </div>
                 <div class="{% if message.sender == request.user %}bg-primary text-white p-2 rounded{% else %}bg-light p-2 rounded{% endif %}">
                     {{ message.text }}
@@ -19,16 +18,18 @@
         {% empty %}
             <p>No messages yet.</p>
         {% endfor %}
-    </div>
-    <br><br><br><br>    <br><br><br><br>    <br><br><br><br>    <br><br><br><br>
+    
 
-    <form method="post">
+    <!-- Message Input Section -->
+    <form method="post" class="mt-4">
         {% csrf_token %}
         <div class="mb-3">
-            <label for="message" class="form-label">Your Message</label>  <!-- Added label for accessibility -->
-            <textarea id="message" name="message" class="form-control" placeholder="Type your message here..." required style="resize: vertical;"></textarea>
+            <label for="message" class="form-label">Your Message</label>
+            <textarea id="message" name="message" class="form-control" placeholder="Type your message here..." required></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Send</button>
     </form>
 </div>
+</div>
+
 {% endblock %}

@@ -1,19 +1,144 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Your Conversations</h2>
-<ul>
-    {% for conversation in conversations %}
-        <li>
-            <a href="{% url 'conversation_detail' conversation.id %}">
-                Conversation with 
-                {% for user in conversation.participants.all %}
-                    {% if user != request.user %} {{ user.username }} {% endif %}
-                {% endfor %}
-            </a>
-        </li>
-    {% empty %}
-        <p>You have no conversations.</p>
-    {% endfor %}
-</ul>
+<style>
+    .messaging-container {
+        display: flex;
+        height: 80vh;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
+
+    .conversations-sidebar {
+        flex: 0.3;
+        border-right: 1px solid #ddd;
+        padding: 15px;
+        background-color: #f9f9f9;
+        overflow-y: auto;
+    }
+
+    .conversations-sidebar h3 {
+        margin: 0 0 10px;
+        font-size: 1.5rem;
+        color: #333;
+    }
+
+    .conversations-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .conversation-item {
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+    .conversation-item a {
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: background-color 0.3s;
+    }
+
+    .conversation-item a:hover {
+        background-color: #e7f3ff;
+    }
+
+    .chat-preview {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .avatar {
+        flex-shrink: 0;
+        width: 50px;
+        height: 50px;
+        margin-right: 15px;
+    }
+
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #ddd;
+    }
+
+    .chat-info {
+        flex: 1;
+    }
+
+    .chat-info .username {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin: 0 0 5px;
+        color: #333;
+    }
+
+    .chat-info .last-message {
+        font-size: 0.9rem;
+        color: #666;
+        margin: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .chat-area {
+        flex: 0.7;
+        padding: 15px;
+        background-color: #fff;
+    }
+</style>
+
+<div class="messaging-container">
+    <!-- Sidebar for conversations -->
+    <div class="conversations-sidebar">
+        <h3>Chats</h3>
+        <ul>
+            {% for conversation in conversations %}
+                <li class="conversation-item">
+                    <a href="{% url 'conversation_detail' conversation.id %}">
+                        <div class="chat-preview">
+                            <div class="avatar">
+                                <!-- Display participant's profile picture -->
+                                {% for user in conversation.participants.all %}
+                                    {% if user != request.user %}
+                                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="chat-info">
+                                <p class="username">
+                                    {% for user in conversation.participants.all %}
+                                        {% if user != request.user %}
+                                            {{ user.username }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </p>
+                                <p class="last-message">
+                                    {{ conversation.messages.last.text|truncatewords:10 }}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            {% empty %}
+                <p>You have no conversations.</p>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Chat area -->
+    <div class="chat-area">
+        <!-- You can include a message thread dynamically here if necessary -->
+    </div>
+</div>
 {% endblock %}
