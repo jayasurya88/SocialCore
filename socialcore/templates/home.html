@@ -128,28 +128,54 @@
                     
                     <div class="feed">
                         {% for post in posts %}
-                            <div class="head">
-                                <div class="user">
-                                    <div class="profile-photo">
-                                        {% if post.user.profile_picture %}
-                                            <img src="{{ post.user.profile_picture.url }}" alt="Profile picture">
-                                        {% else %}
-                                            <img src="{% static 'images/profile-13.jpg' %}" alt="Default Profile picture">
-                                        {% endif %}
-                                    </div>
-                                    <div class="info">
-                                        <h3>{{ post.user.username }}</h3>
-                                        <small>{{ post.location }}, {{ post.created_at|timesince }} ago</small>
-                                    </div>
+                        <div class="head">
+                            <div class="user">
+                                <div class="profile-photo">
+                                    {% if post.user.profile_picture %}
+                                        <img src="{{ post.user.profile_picture.url }}" alt="Profile picture">
+                                    {% else %}
+                                        <img src="{% static 'images/profile-13.jpg' %}" alt="Default Profile picture">
+                                    {% endif %}
                                 </div>
+                                <div class="info">
+                                    <h3>{{ post.user.username }}</h3>
+                                    <small>{{ post.location }}, {{ post.created_at|timesince }} ago</small>
+                                </div>
+                            </div>
+                            
+                            {% if post.user == request.user %}
                                 <span class="edit">
                                     <i class="uil uil-ellipsis-h"></i>
                                 </span>
-                            </div>
+                                <div class="post-options" style="position: relative;">
+                                    <button onclick="toggleDropdown('{{ post.id }}')" class="btn btn-secondary btn-sm" style="border: none; background: white; font-size: 24px; color: #333; cursor: pointer; padding: 8px 15px; border-radius: 50%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(255, 255, 255, 0.3); transition: all 0.3s ease;">
+                                        &#x22EE;
+                                    </button>
+                                    <ul id="dropdown-menu-{{ post.id }}" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; list-style: none; padding: 0; margin: 0; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);">
+                                        <li><a href="{% url 'edit_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Edit Post</a></li>
+                                        <li><a href="{% url 'delete_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Delete Post</a></li>
+                                    </ul>
+                                </div>
+                            {% else %}
+                                <div class="post-options" style="position: relative;">
+                                    <button onclick="toggleDropdown('{{ post.id }}')" class="btn btn-secondary btn-sm" style="border: none; background: white; font-size: 24px; color: #333; cursor: pointer; padding: 8px 15px; border-radius: 50%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(255, 255, 255, 0.3); transition: all 0.3s ease;">
+                                        &#x22EE;
+                                    </button>
+                                    <ul id="dropdown-menu-{{ post.id }}" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; list-style: none; padding: 0; margin: 0; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);">
+                                        <li><a href="{% url 'report_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Report Post</a></li>
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        
+                        
+                        
+                        
                     
                             <div class="photo">
                                 {% if post.image %}
-                                <img src="{{ post.image.url }}" alt="Post image" style="width: 100%; height:400px; object-fit: cover;">
+                                <img src="{{ post.image.url }}" alt="Post image" style="width: 100%; height:400px; object-fit: contain;">
                                 {% else %}
                                     <img src="{% static 'images/feed-1.jpg' %}" alt="Default Post image">
                                 {% endif %}
@@ -571,6 +597,8 @@
     </div>
     <script>
 // Wait until the document is ready
+
+// Wait until the document is ready
 document.addEventListener("DOMContentLoaded", function() {
     const likeForms = document.querySelectorAll('.like-form');
     
@@ -604,11 +632,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (data.liked) {
                     likeButton.classList.remove('far');
                     likeButton.classList.add('fas');
-                    likeButton.style.color = '#e74c3c';  // Red color for liked posts
+                    likeButton.style.color = '#e74c3c';
+                    window.location.reload();  // Red color for liked posts
                 } else {
                     likeButton.classList.remove('fas');
                     likeButton.classList.add('far');
-                    likeButton.style.color = '#333';  // Default color for unliked posts
+                    likeButton.style.color = '#333'; 
+                    window.location.reload(); // Default color for unliked posts
                 }
 
                 // Update the like count dynamically
@@ -624,8 +654,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 likedByDiv.innerHTML = likedByHtml;
 
-                // Restore the scroll position after the update
+                
                 window.scrollTo(0, scrollPosition);
+
+                // Reload the page to reflect updated state
+                window.location.reload();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -633,7 +666,28 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+</script>
 
+
+    </script>
+    <script>
+        // Toggle comments visibility
+        document.getElementById('toggle-comments').addEventListener('click', function() {
+            const commentsContainer = document.getElementById('comments-container');
+            if (commentsContainer.style.display === 'none') {
+                commentsContainer.style.display = 'block';
+                this.textContent = 'Hide Comments'; // Change button text
+            } else {
+                commentsContainer.style.display = 'none';
+                this.textContent = 'Show Comments'; // Change button text
+            }
+        });
+    
+        function toggleDropdown(postId) {
+    var dropdownMenu = document.getElementById("dropdown-menu-" + postId);
+    var isVisible = dropdownMenu.style.display === "block";
+    dropdownMenu.style.display = isVisible ? "none" : "block";
+}
     </script>
     <script src="{% static 'main.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

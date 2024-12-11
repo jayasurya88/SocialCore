@@ -87,7 +87,12 @@
 <body>
     <nav>
         <div class="container">
-            <h2 class="log">SocialCore</h2>
+            <h2 class="log">
+                <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">
+                    SocialCore
+                </a>
+            </h2>
+            
             <div class="search-bar">
                 <form method="GET" action="{% url 'user_search' %}" style="display: inline;">
                     <i class="uil uil-search"></i>

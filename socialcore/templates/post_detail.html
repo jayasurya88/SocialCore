@@ -31,9 +31,14 @@
         </div>
         {% else %}
         <div class="post-options" style="position: relative;">
-            <button onclick="toggleDropdown()" class="btn btn-secondary btn-sm" style="border: none; background: black; font-size: 24px; cursor: pointer;">&#x22EE;</button>
-            <ul id="dropdown-menu" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; list-style: none; padding: 0; margin: 0; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);">
-                <li><a href="{% url 'report_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Report Post</a></li>
+            <button onclick="toggleDropdown('{{ post.id }}')" class="btn btn-secondary btn-sm" style="border: none; background: black; font-size: 24px; cursor: pointer;">&#x22EE;</button>
+            <ul id="dropdown-menu-{{ post.id }}" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; list-style: none; padding: 0; margin: 0; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);">
+                {% if post.user == request.user %}
+                    <li><a href="{% url 'edit_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Edit Post</a></li>
+                    <li><a href="{% url 'delete_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Delete Post</a></li>
+                {% else %}
+                    <li><a href="{% url 'report_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Report Post</a></li>
+                {% endif %}
             </ul>
         </div>
         {% endif %}
