@@ -132,15 +132,20 @@
                             <div class="user">
                                 <div class="profile-photo">
                                     {% if post.user.profile_picture %}
-                                        <img src="{{ post.user.profile_picture.url }}" alt="Profile picture">
+                                        <a href="{% url 'profile_view' post.user.username %}">
+                                            <img src="{{ post.user.profile_picture.url }}" alt="Profile picture">
+                                        </a>
                                     {% else %}
-                                        <img src="{% static 'images/profile-13.jpg' %}" alt="Default Profile picture">
+                                        <a href="{% url 'profile_view' post.user.username %}">
+                                            <img src="{% static 'images/profile-13.jpg' %}" alt="Default Profile picture">
+                                        </a>
                                     {% endif %}
                                 </div>
                                 <div class="info">
-                                    <h3>{{ post.user.username }}</h3>
+                                    <h3><a href="{% url 'profile_view' post.user.username %}">{{ post.user.username }}</a></h3>
                                     <small>{{ post.location }}, {{ post.created_at|timesince }} ago</small>
                                 </div>
+                                
                             </div>
                             
                             {% if post.user == request.user %}
@@ -204,11 +209,20 @@
                             
                     
                             <div class="liked-by" id="liked-by-{{ post.id }}">
-                                {% for like in post.likes.all|slice:":3" %}
-                                    <span><img src="{{ like.profile_picture.url }}" alt="{{ like.username }}'s profile picture" style="width: 24px; height: 24px; border-radius: 50%;"></span>
-                                {% endfor %}
-                                <p>Liked by <b>{{ post.likes.first.username }}</b> and <b>{{ post.likes.count }}</b> others</p>
+                                {% if post.likes.count > 0 %}
+                                    {% for like in post.likes.all|slice:":3" %}
+                                        <span><img src="{{ like.profile_picture.url }}" alt="{{ like.username }}'s profile picture" style="width: 24px; height: 24px; border-radius: 50%;"></span>
+                                    {% endfor %}
+                                    {% if post.likes.count == 1 %}
+                                        <p>Liked by <b>{{ post.likes.first.username }}</b></p>
+                                    {% else %}
+                                        <p>Liked by <b>{{ post.likes.first.username }}</b> and <b>{{ post.likes.count|add:"-1" }}</b> others</p>
+                                    {% endif %}
+                                {% else %}
+                                    <p>No likes yet.</p>
+                                {% endif %}
                             </div>
+                            
                     
                             <div class="caption">
                                 <p><b>{{ post.user.username }}</b> {{ post.caption }} <span class="harsh-tag">#lifestyle</span></p>
