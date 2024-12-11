@@ -8,14 +8,18 @@
         <div class="row mt-5 profile-row"> <!-- Profile row -->
             <!-- Profile Picture Section -->
             <div class="col-md-3 text-center profile-picture-section">
-                {% if user.profile_picture %}
+                {% if user.is_authenticated %}
+                    {% if user.profile_picture %}
                     <img src="{{ user.profile_picture.url }}" 
-                         alt="Profile Picture" 
-                         class="rounded-circle img-fluid" 
-                         width="150" height="150">
-                {% else %}
-                    <!-- Removed default profile picture line -->
-                {% endif %}
+                    alt="Profile Picture" 
+                    class="img-fluid" 
+                    style="border-radius: 50%; width: 80px; height: 80px; object-fit: cover;">
+               
+               
+                    {% else %}
+                        <!-- Removed default profile picture line -->
+                    {% endif %}
+                    {% endif %}
             </div>
 
             <!-- Profile Details Section -->
