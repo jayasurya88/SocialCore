@@ -40,7 +40,7 @@ path('like/<int:post_id>/', views.toggle_like, name='toggle_like'),
     path('report/<int:post_id>/', views.report_post, name='report_post'),
     path('conversations/start/<int:user_id>/', views.start_conversation, name='start_conversation'),
     path('send-message/<int:recipient_id>/', views.send_message, name='send_message'),
-    # pattern for conversation details
+    path('explore/', views.explore_page, name='explore_page'),
     path('conversations/<int:conversation_id>/', views.conversation_detail, name='conversation_detail'),
     path("post/<int:post_id>/edit/", views.edit_post, name="edit_post"),
     path("post/<int:post_id>/delete/", views.delete_post, name="delete_post"),

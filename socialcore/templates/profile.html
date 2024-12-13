@@ -33,7 +33,7 @@
                     <!-- Friend Request Button -->
                     {% if request.user != user %}
                         {% if not are_friends and not friend_request_sent %}
-                            <a href="{% url 'send_friend_request' user.id %}" class="btn btn-primary ms-3">Send Friend Request</a>
+                            <a href="{% url 'send_friend_request' user.id %}" class="btn btn-primary ">Send Friend Request</a>
                         {% elif friend_request_sent %}
                             <p class="text-muted ms-3">Friend request sent.</p>
                         {% elif are_friends %}  <!-- Show this only if both users are friends -->

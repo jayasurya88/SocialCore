@@ -935,3 +935,38 @@ def delete_user_view(request, user_id):
         return redirect('user_management_view')
 
     return render(request, 'confirm_delete.html', {'user': user})
+
+
+
+from django.shortcuts import render
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+def explore_page(request):
+    # Fetch posts from users whose accounts are not private
+    posts = Post.objects.filter(user__is_private=False).order_by('-created_at')  # Fetch only public posts
+    
+    # Suggested friends logic
+    if request.user.is_authenticated:
+        user = request.user
+
+        # Get the list of the user's friends, sent requests, and received requests
+        friends = user.followers.all()  # Assuming followers/following represents friendships
+        sent_requests = user.sent_friend_requests.values_list('to_user', flat=True)
+        received_requests = user.received_friend_requests.values_list('from_user', flat=True)
+
+        # Fetch users not already friends or in requests, and not the current user
+        suggested_friends = User.objects.exclude(
+            id__in=friends
+        ).exclude(
+            id__in=sent_requests
+        ).exclude(
+            id__in=received_requests
+        ).exclude(
+            id=user.id
+        ).order_by('?')[:5]  # Randomly select 5 users
+    else:
+        suggested_friends = User.objects.none()  # No suggestions for unauthenticated users
+
+    return render(request, 'explore.html', {'posts': posts, 'suggested_friends': suggested_friends})
