@@ -189,7 +189,7 @@ def login_view(request):
                             messages.success(request, 'Staff login successful.')
                             return redirect('admin')  # Redirect to staff dashboard
                         else:
-                            messages.success(request, 'Login successful.')
+                            
                             return redirect('my_profile_view', username=user.username)
             messages.error(request, 'Invalid credentials. Please try again.')
         else:
@@ -423,7 +423,7 @@ def add_comment(request, post_id):
                 notification_type='comment', 
                 post=post
             )
-        messages.success(request, 'Comment added successfully!')
+        
         return redirect('post_detail', post_id=post.id)
     return redirect('post_detail', post_id=post_id)
 from .models import Notification
@@ -433,10 +433,10 @@ def like_post(request, post_id):
 
     if request.user in post.likes.all():
         post.likes.remove(request.user)
-        messages.success(request, 'Post unliked.')
+        
     else:
         post.likes.add(request.user)
-        messages.success(request, 'Post liked.')
+        
 
         # Create a notification for the post owner
         if request.user != post.user:  # Prevent self-notification
@@ -503,7 +503,7 @@ def add_reply(request, comment_id):
         reply = Comment(post=comment.post, user=request.user, text=text, parent=comment)
         reply.save()
 
-        messages.success(request, 'Reply added successfully!')
+        
         return redirect('post_detail', post_id=comment.post.id)
     return redirect('post_detail', post_id=comment.post.id)
 
@@ -654,7 +654,7 @@ def reject_friend_request(request, request_id):
     # Ensure the logged-in user is the recipient of the request
     if friend_request.to_user == request.user:
         friend_request.delete()
-        messages.success(request, 'Friend request rejected.')
+        
     else:
         messages.error(request, 'Invalid request.')
 

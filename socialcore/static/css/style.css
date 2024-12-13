@@ -37,7 +37,9 @@
   list-style: none;
   border: none;
 }
-
+html {
+  scroll-behavior: smooth;
+}
 body {
   font-family: "Poppins", sans-serif;
   color: var(--color-dark);

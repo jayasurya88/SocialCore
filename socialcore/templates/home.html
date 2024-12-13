@@ -200,9 +200,10 @@
                                     <span class="like-count" id="like-count-{{ post.id }}">{{ post.likes.count }}</span> <!-- Display Like Count -->
                                 </form>
                                 
-                                <a href="#comment-form" style="text-decoration: none; color: #333;">
+                                <a href="#comment-textarea" style="text-decoration: none; color: #333;">
                                     <i class="far fa-comment" style="font-size: 24px;"></i>
-                                </a> 
+                                </a>
+                                
                             </div>
                             
 
@@ -230,20 +231,30 @@
                             
                             <div class="comments text-muted">
                                 <h3>Comments</h3>
+                            
+                                <!-- Add comment form -->
                                 <form method="post" action="{% url 'add_comment' post.id %}">
                                     {% csrf_token %}
-                                    <textarea name="comment" rows="3" cols="50" placeholder="Add a comment..."></textarea><br><br>
-                                    <button type="submit">Add Comment</button>
+                                    <textarea id="comment-textarea" name="comment" rows="3" cols="50" placeholder="Add a comment..." required></textarea><br><br>
+                                    <button type="submit" class="btn btn-primary">Add Comment</button>
                                 </form>
-                    
+                                <!-- Display comments -->
                                 <ul>
                                     {% for comment in post.comments.all %}
-                                        <li>{{ comment.user.username }}: {{ comment.text }} ({{ comment.created_at }})</li>
+                                        <li class="comment-item">
+                                            <div class="comment-header">
+                                                <strong>{{ comment.user.username }}</strong>
+                                                <small class="text-muted">{{ comment.created_at|date:"Y-m-d H:i" }}</small>
+                                            </div>
+                                            <p>{{ comment.text }}</p>
+                                        </li>
                                     {% empty %}
                                         <li>No comments yet.</li>
                                     {% endfor %}
                                 </ul>
                             </div>
+                            
+                            
                             <hr> <!-- Optional: Separator between posts -->
                         {% empty %}
                             <p>No posts available.</p>
