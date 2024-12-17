@@ -529,36 +529,35 @@
             <div class="right">
                 
                 <!-- friend request -->
-                <div class="friend-requests">
-                    <h4>Friend Requests</h4>
-                    
-                    <!-- Loop through received friend requests -->
-                    {% for request in received_requests %}
-                        <div class="request">
-                            <div class="info">
-                                <!-- Display sender's profile photo -->
-                                <div class="profile-photo">
-                                    <img src="{{ request.from_user.profile_picture.url }}" alt="{{ request.from_user.username }}'s Profile Photo" />
-
-                                </div>
-                                <div>
-                                    <h5 class="new_h4" >{{ request.from_user.username }}</h5>
-                                    <!-- Add logic to calculate mutual friends -->
-                                </div>
-                            </div>
-                            <div class="action">
-                                <!-- Accept and Decline buttons with dynamic URLs -->
-                                <a href="{% url 'accept_friend_request' request.id %}" class="btn btn-primary">Accept</a>
-                                <a href="{% url 'reject_friend_request' request.id %}" class="btn" style="background-color: rgb(238, 70, 70);color: white;">Decline</a>
-                            </div>
-                        </div>
-                    {% empty %}
-                        <p>No friend requests received.</p>
-                    {% endfor %}
-                    
-                    <!-- Loop through sent friend requests -->
-                    
+                {% if received_requests %}
+<div class="friend-requests">
+    <h4>Friend Requests</h4>
+    
+    <!-- Loop through received friend requests -->
+    {% for request in received_requests %}
+        <div class="request">
+            <div class="info">
+                <!-- Display sender's profile photo -->
+                <div class="profile-photo">
+                    {% if request.from_user.profile_picture %}
+                        <img src="{{ request.from_user.profile_picture.url }}" alt="{{ request.from_user.username }}'s Profile Photo" />
+                    {% else %}
+                        <img src="{% static 'profile_pics/default_profile_pic.png' %}" alt="Default Profile Photo" />
+                    {% endif %}
                 </div>
+                <div>
+                    <h5 class="new_h4">{{ request.from_user.username }}</h5>
+                </div>
+            </div>
+            <div class="action">
+                <!-- Accept and Decline buttons with dynamic URLs -->
+                <a href="{% url 'accept_friend_request' request.id %}" class="btn btn-primary">Accept</a>
+                <a href="{% url 'reject_friend_request' request.id %}" class="btn" style="background-color: rgb(238, 70, 70); color: white;">Decline</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
                 <div class="suggested-friends">
                     <h4>Suggested Friends</h4>
 

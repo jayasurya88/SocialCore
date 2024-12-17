@@ -78,8 +78,7 @@
                         <h3>Explore</h3>
                     </a>
                     <a class="menu-item" id="Notifications" href="{% url 'notifications' %}">
-                        <span><i class="uil uil-bell"><small class="notification-count">{{ notifications.count
-                                    }}</small></i></span>
+                        <span><i class="uil uil-bell"><small class="notification-count"></small></i></span>
                         <h3>Notifications</h3>
                         <!-- Notification popup -->
                         <div class="notifications-popup">
@@ -152,8 +151,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="info">
-                                    <h3><a href="{% url 'profile_view' post.user.username %}">{{ post.user.username
-                                            }}</a></h3>
+                                    <h3><a href="{% url 'profile_view' post.user.username %}">{{ post.user }}</a></h3>
                                     <small>{{ post.location }}, {{ post.created_at|timesince }} ago</small>
                                 </div>
 

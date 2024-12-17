@@ -20,9 +20,6 @@ def index(request):
 
 
 def home(request):
-    if not request.user.is_authenticated:
-        return redirect('login')  # Redirect unauthenticated users to login page
-    
     # Fetch all posts from users that the logged-in user follows
     following = Friendship.objects.filter(user1=request.user).values_list('user2', flat=True)
     posts = Post.objects.filter(user__in=following).order_by('-created_at')
@@ -34,32 +31,12 @@ def home(request):
     # Fetch the count of unread notifications
     unread_notifications_count = Notification.objects.filter(user=request.user, is_read=False).count()
 
-    # Suggested friends logic
-    user = request.user
-
-    # Get the list of the user's friends, sent requests, and received requests
-    friends = user.followers.all()  # Assuming followers represent friendships
-    sent_requests_ids = user.sent_friend_requests.values_list('to_user', flat=True)
-    received_requests_ids = user.received_friend_requests.values_list('from_user', flat=True)
-
-    # Fetch users not already friends or in requests, and not the current user
-    suggested_friends = User.objects.exclude(
-        id__in=friends
-    ).exclude(
-        id__in=sent_requests_ids
-    ).exclude(
-        id__in=received_requests_ids
-    ).exclude(
-        id=user.id
-    ).order_by('?')[:5]  # Randomly select 5 users
-
     # Pass the friend requests and other context variables to the template
     context = {
         'posts': posts,
         'received_requests': received_requests,
         'sent_requests': sent_requests,
-        'unread_notifications_count': unread_notifications_count,
-        'suggested_friends': suggested_friends,  # Add suggested friends here
+        'unread_notifications_count': unread_notifications_count,  # Add this line
     }
     
     return render(request, 'home.html', context)
@@ -659,8 +636,7 @@ def accept_friend_request(request, request_id):
         else:
             # Create a friendship
             Friendship.objects.create(user1=friend_request.from_user, user2=friend_request.to_user)
-            messages.success(request, 'Friend request accepted.')
-
+            
         # Delete the friend request regardless of the friendship status
         friend_request.delete()
     else:
@@ -975,19 +951,27 @@ def explore_page(request):
         user = request.user
 
         # Get the list of the user's friends, sent requests, and received requests
-        friends = user.followers.all()  # Assuming followers/following represents friendships
-        sent_requests = user.sent_friend_requests.values_list('to_user', flat=True)
-        received_requests = user.received_friend_requests.values_list('from_user', flat=True)
+        friends = Friendship.objects.filter(
+            Q(user1=user) | Q(user2=user)
+        ).values_list('user1', 'user2')  # List of IDs of user's friends (from both directions)
 
-        # Fetch users not already friends or in requests, and not the current user
+        # Flatten the list of tuples (user1, user2) to a single list of user IDs
+        friends_ids = [friend[0] if friend[0] != user.id else friend[1] for friend in friends]
+
+        sent_requests_ids = user.sent_friend_requests.values_list('to_user', flat=True)
+        received_requests_ids = user.received_friend_requests.values_list('from_user', flat=True)
+
+        # Exclude friends, sent/received requests, current user, and superusers
         suggested_friends = User.objects.exclude(
-            id__in=friends
+            id__in=friends_ids  # Exclude current friends
         ).exclude(
-            id__in=sent_requests
+            id__in=sent_requests_ids  # Exclude users with sent friend requests
         ).exclude(
-            id__in=received_requests
+            id__in=received_requests_ids  # Exclude users with received friend requests
         ).exclude(
-            id=user.id
+            id=user.id  # Exclude current user
+        ).exclude(
+            is_superuser=True  # Exclude admin users
         ).order_by('?')[:5]  # Randomly select 5 users
     else:
         suggested_friends = User.objects.none()  # No suggestions for unauthenticated users
