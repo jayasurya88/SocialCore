@@ -67,7 +67,7 @@
                 </a>
                 <!-- Sidebar -->
                 <div class="sidebar">
-                    <a class="menu-item active">
+                    <a class="menu-item active" href="{% url 'home' %}">
                         <span><i class="uil uil-home"></i></span><h3>Home</h3> 
                     </a>
                     <a class="menu-item" href ="{% url 'explore_page' %}">
@@ -100,7 +100,7 @@
                             {% endfor %}
                         </div>
                     </a>
-                    <a class="menu-item" id="messages-notifications">
+                    <a class="menu-item" id="messages-notifications" href="{% url 'conversation_list' %}">
                         <span><i class="uil uil-envelope"><small class="notification-count" id="Messages-count">6</small></i></span><h3>Messages</h3>
                     </a>
                     <a class="menu-item" >
@@ -559,6 +559,50 @@
                     <!-- Loop through sent friend requests -->
                     
                 </div>
+                <div class="suggested-friends">
+                    <h4>Suggested Friends</h4>
+
+                    <!-- Loop through suggested friends -->
+                    {% for friend in suggested_friends %}
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
+                        <div style="display: flex; align-items: center;">
+                            <!-- Display friend's profile photo with clickable link -->
+                            <div style="margin-right: 15px;">
+                                <a href="{% url 'profile_view' friend.username %}">
+                                    {% if friend.profile_picture %}
+                                    <img src="{{ friend.profile_picture.url }}"
+                                        alt="{{ friend.username }}'s Profile Photo"
+                                        style="width: 50px; height: 50px; border-radius: 50%;">
+                                    {% else %}
+                                    <img src="{% static 'profile_pics/default_profile_pic.png' %}"
+                                        alt="Default Profile Photo"
+                                        style="width: 50px; height: 50px; border-radius: 50%;">
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div>
+                                <h5 style="margin: 0; font-size: 16px; font-weight: 500;">
+                                    <a href="{% url 'profile_view' friend.username %}"
+                                        style="text-decoration: none; color: #007bff;">{{ friend.username }}</a>
+                                </h5>
+                            </div>
+                        </div>
+                        <div>
+                            <!-- Add friend button -->
+                            <a href="{% url 'send_friend_request' friend.id %}" class="btn btn-primary"
+                                style="font-size: 14px; padding: 5px 10px;">Add Friend</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No suggested friends at the moment.</p>
+                    {% endfor %}
+                </div>
+
+
+
+            </div>
+
             </div>
         </div>
     </main>

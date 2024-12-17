@@ -1,7 +1,7 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Qwitcher+Grypen:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        .log{
+        .log {
             font-family: "Qwitcher Grypen", cursive;
             font-weight: 700;
             font-style: normal;
@@ -22,6 +22,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav>
         <div class="container">
@@ -32,22 +33,23 @@
                     <input type="search" name="q" placeholder="search for creators, inspirations, and projects">
                 </form>
             </div>
-            
+
             <div class="create d-flex align-items-center mb-3">
                 <a href="{% url 'my_profile_view' user.username %}" class="profile-photo me-2">
-                    <img src="{{ user.profile_picture.url }}" alt="User Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                    <img src="{{ user.profile_picture.url }}" alt="User Profile Picture"
+                        style="width: 40px; height: 40px; border-radius: 50%;">
                 </a>
                 <a href="{% url 'create_post' %}" class="btn btn-primary">Create New Post</a>
-            
+
                 {% if user.is_authenticated %}
                 <form method="POST" action="{% url 'custom_logout' %}" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Logout</button>
                 </form>
-            {% endif %}
-            
+                {% endif %}
+
             </div>
-            
+
         </div>
     </nav>
 
@@ -67,200 +69,226 @@
                 </a>
                 <!-- Sidebar -->
                 <div class="sidebar">
-                    <a class="menu-item active">
-                        <span><i class="uil uil-home"></i></span><h3>Home</h3> 
+                    <a class="menu-item active" href="{% url 'home' %}">
+                        <span><i class="uil uil-home"></i></span>
+                        <h3>Home</h3>
                     </a>
                     <a class="menu-item">
-                        <span><i class="uil uil-compass"></i></span><h3>Explore</h3>
+                        <span><i class="uil uil-compass"></i></span>
+                        <h3>Explore</h3>
                     </a>
                     <a class="menu-item" id="Notifications" href="{% url 'notifications' %}">
-                        <span><i class="uil uil-bell"><small class="notification-count">{{ notifications.count }}</small></i></span>
+                        <span><i class="uil uil-bell"><small class="notification-count">{{ notifications.count
+                                    }}</small></i></span>
                         <h3>Notifications</h3>
                         <!-- Notification popup -->
                         <div class="notifications-popup">
                             {% for notification in notifications %}
-                                <div>
-                                    <div class="profile-photo">
-                                        <img src="{{ notification.from_user.profile_picture.url }}" alt="pic">
-                                    </div>
-                                    <div class="notification-body">
-                                        <b>{{ notification.from_user.username }}</b>
-                                        {% if notification.notification_type == 'friend_request' %}
-                                            accepted your friend request
-                                        {% elif notification.notification_type == 'comment' %}
-                                            commented on your post
-                                        {% elif notification.notification_type == 'like' %}
-                                            liked your post
-                                        {% endif %}
-                                        <small class="text-muted">{{ notification.created_at|timesince }} AGO</small>
-                                    </div>
+                            <div>
+                                <div class="profile-photo">
+                                    <img src="{{ notification.from_user.profile_picture.url }}" alt="pic">
                                 </div>
+                                <div class="notification-body">
+                                    <b>{{ notification.from_user.username }}</b>
+                                    {% if notification.notification_type == 'friend_request' %}
+                                    accepted your friend request
+                                    {% elif notification.notification_type == 'comment' %}
+                                    commented on your post
+                                    {% elif notification.notification_type == 'like' %}
+                                    liked your post
+                                    {% endif %}
+                                    <small class="text-muted">{{ notification.created_at|timesince }} AGO</small>
+                                </div>
+                            </div>
                             {% empty %}
-                                <div>No notifications available.</div>
+                            <div>No notifications available.</div>
                             {% endfor %}
                         </div>
                     </a>
-                    <a class="menu-item" id="messages-notifications">
-                        <span><i class="uil uil-envelope"><small class="notification-count" id="Messages-count">6</small></i></span><h3>Messages</h3>
+                    <a class="menu-item" id="messages-notifications" href="{% url 'conversation_list' %}">
+                        <span><i class="uil uil-envelope"><small class="notification-count"
+                                    id="Messages-count">6</small></i></span>
+                        <h3>Messages</h3>
                     </a>
-                    <a class="menu-item" >
-                        <span><i class="uil uil-bookmark"></i></span><h3>Profile</h3>
+                    <a class="menu-item">
+                        <span><i class="uil uil-bookmark"></i></span>
+                        <h3>Profile</h3>
                     </a>
-                    
+
                     <a class="menu-item" id="theme">
-                        <span><i class="uil uil-palette"></i></span><h3>Theme</h3>
+                        <span><i class="uil uil-palette"></i></span>
+                        <h3>Theme</h3>
                     </a>
-                    <a class="menu-item"  href="{% url 'privacy_settings' %}">
-                        
-                        <span><i class="uil uil-setting"></i></span><h3>Settings</h3>
-                    </a>      
+                    <a class="menu-item" href="{% url 'privacy_settings' %}">
+
+                        <span><i class="uil uil-setting"></i></span>
+                        <h3>Settings</h3>
+                    </a>
                 </div>
                 <label for="create-post" class="btn btn-primary">Create Post</label>
             </div>
             <!-- End of Left -->
 
             <div class="middle">
-                
-                
-                
+
+
+
                 <!-- Feeds -->
                 <div class="feeds">
-                    
+
                     <div class="feed">
                         {% for post in posts %}
                         <div class="head">
                             <div class="user">
                                 <div class="profile-photo">
                                     {% if post.user.profile_picture %}
-                                        <a href="{% url 'profile_view' post.user.username %}">
-                                            <img src="{{ post.user.profile_picture.url }}" alt="Profile picture">
-                                        </a>
+                                    <a href="{% url 'profile_view' post.user.username %}">
+                                        <img src="{{ post.user.profile_picture.url }}" alt="Profile picture">
+                                    </a>
                                     {% else %}
-                                        <a href="{% url 'profile_view' post.user.username %}">
-                                            <img src="{% static 'images/profile-13.jpg' %}" alt="Default Profile picture">
-                                        </a>
+                                    <a href="{% url 'profile_view' post.user.username %}">
+                                        <img src="{% static 'images/profile-13.jpg' %}" alt="Default Profile picture">
+                                    </a>
                                     {% endif %}
                                 </div>
                                 <div class="info">
-                                    <h3><a href="{% url 'profile_view' post.user.username %}">{{ post.user.username }}</a></h3>
+                                    <h3><a href="{% url 'profile_view' post.user.username %}">{{ post.user.username
+                                            }}</a></h3>
                                     <small>{{ post.location }}, {{ post.created_at|timesince }} ago</small>
                                 </div>
-                                
-                            </div>
-                            
-                            {% if post.user == request.user %}
-                                <span class="edit">
-                                    <i class="uil uil-ellipsis-h"></i>
-                                </span>
-                                <div class="post-options" style="position: relative;">
-                                    <button onclick="toggleDropdown('{{ post.id }}')" class="btn btn-secondary btn-sm" style="border: none; background: white; font-size: 24px; color: #333; cursor: pointer; padding: 8px 15px; border-radius: 50%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(255, 255, 255, 0.3); transition: all 0.3s ease;">
-                                        &#x22EE;
-                                    </button>
-                                    <ul id="dropdown-menu-{{ post.id }}" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; list-style: none; padding: 0; margin: 0; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);">
-                                        <li><a href="{% url 'edit_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Edit Post</a></li>
-                                        <li><a href="{% url 'delete_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Delete Post</a></li>
-                                    </ul>
-                                </div>
-                            {% else %}
-                                <div class="post-options" style="position: relative;">
-                                    <button onclick="toggleDropdown('{{ post.id }}')" class="btn btn-secondary btn-sm" style="border: none; background: white; font-size: 24px; color: #333; cursor: pointer; padding: 8px 15px; border-radius: 50%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(255, 255, 255, 0.3); transition: all 0.3s ease;">
-                                        &#x22EE;
-                                    </button>
-                                    <ul id="dropdown-menu-{{ post.id }}" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; list-style: none; padding: 0; margin: 0; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);">
-                                        <li><a href="{% url 'report_post' post.id %}" style="text-decoration: none; padding: 8px 16px; display: block;">Report Post</a></li>
-                                    </ul>
-                                </div>
-                            {% endif %}
-                        </div>
-                        
-                        
-                        
-                        
-                        
-                    
-                            <div class="photo">
-                                {% if post.image %}
-                                <img src="{{ post.image.url }}" alt="Post image" style="width: 100%; height:400px; object-fit: contain;">
-                                {% else %}
-                                    <img src="{% static 'images/feed-1.jpg' %}" alt="Default Post image">
-                                {% endif %}
-                            </div>
-                    
-                            <!-- Updated Like Button in Feed -->
-                            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
-                                <form method="post" action="{% url 'toggle_like' post.id %}" class="like-form" id="like-form-{{ post.id }}">
-                                    {% csrf_token %}
-                                    <button type="submit" style="border: none; background: none; cursor: pointer;">
-                                        {% if request.user in post.likes.all %}
-                                            <i class="fas fa-heart" style="color: #e74c3c; font-size: 24px;"></i>
-                                        {% else %}
-                                            <i class="far fa-heart" style="color: #333; font-size: 24px;"></i>
-                                        {% endif %}
-                                    </button>
-                                    <span class="like-count" id="like-count-{{ post.id }}">{{ post.likes.count }}</span> <!-- Display Like Count -->
-                                </form>
-                                
-                                <a href="#comment-textarea" style="text-decoration: none; color: #333;">
-                                    <i class="far fa-comment" style="font-size: 24px;"></i>
-                                </a>
-                                
-                            </div>
-                            
 
-                            
-                    
-                            <div class="liked-by" id="liked-by-{{ post.id }}">
-                                {% if post.likes.count > 0 %}
-                                    {% for like in post.likes.all|slice:":3" %}
-                                        <span><img src="{{ like.profile_picture.url }}" alt="{{ like.username }}'s profile picture" style="width: 24px; height: 24px; border-radius: 50%;"></span>
-                                    {% endfor %}
-                                    {% if post.likes.count == 1 %}
-                                        <p>Liked by <b>{{ post.likes.first.username }}</b></p>
-                                    {% else %}
-                                        <p>Liked by <b>{{ post.likes.first.username }}</b> and <b>{{ post.likes.count|add:"-1" }}</b> others</p>
-                                    {% endif %}
-                                {% else %}
-                                    <p>No likes yet.</p>
-                                {% endif %}
                             </div>
-                            
-                    
-                            <div class="caption">
-                                <p><b>{{ post.user.username }}</b> {{ post.caption }} <span class="harsh-tag">#lifestyle</span></p>
-                            </div>
-                            
-                            <div class="comments text-muted">
-                                <h3>Comments</h3>
-                            
-                                <!-- Add comment form -->
-                                <form method="post" action="{% url 'add_comment' post.id %}">
-                                    {% csrf_token %}
-                                    <textarea id="comment-textarea" name="comment" rows="3" cols="50" placeholder="Add a comment..." required></textarea><br><br>
-                                    <button type="submit" class="btn btn-primary">Add Comment</button>
-                                </form>
-                                <!-- Display comments -->
-                                <ul>
-                                    {% for comment in post.comments.all %}
-                                        <li class="comment-item">
-                                            <div class="comment-header">
-                                                <strong>{{ comment.user.username }}</strong>
-                                                <small class="text-muted">{{ comment.created_at|date:"Y-m-d H:i" }}</small>
-                                            </div>
-                                            <p>{{ comment.text }}</p>
-                                        </li>
-                                    {% empty %}
-                                        <li>No comments yet.</li>
-                                    {% endfor %}
+
+                            {% if post.user == request.user %}
+                            <span class="edit">
+                                <i class="uil uil-ellipsis-h"></i>
+                            </span>
+                            <div class="post-options" style="position: relative;">
+                                <button onclick="toggleDropdown('{{ post.id }}')" class="btn btn-secondary btn-sm"
+                                    style="border: none; background: white; font-size: 24px; color: #333; cursor: pointer; padding: 8px 15px; border-radius: 50%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(255, 255, 255, 0.3); transition: all 0.3s ease;">
+                                    &#x22EE;
+                                </button>
+                                <ul id="dropdown-menu-{{ post.id }}" class="dropdown-menu"
+                                    style="display: none; position: absolute; top: 30px; right: 0; list-style: none; padding: 0; margin: 0; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);">
+                                    <li><a href="{% url 'edit_post' post.id %}"
+                                            style="text-decoration: none; padding: 8px 16px; display: block;">Edit
+                                            Post</a></li>
+                                    <li><a href="{% url 'delete_post' post.id %}"
+                                            style="text-decoration: none; padding: 8px 16px; display: block;">Delete
+                                            Post</a></li>
                                 </ul>
                             </div>
-                            
-                            
-                            <hr> <!-- Optional: Separator between posts -->
+                            {% else %}
+                            <div class="post-options" style="position: relative;">
+                                <button onclick="toggleDropdown('{{ post.id }}')" class="btn btn-secondary btn-sm"
+                                    style="border: none; background: white; font-size: 24px; color: #333; cursor: pointer; padding: 8px 15px; border-radius: 50%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(255, 255, 255, 0.3); transition: all 0.3s ease;">
+                                    &#x22EE;
+                                </button>
+                                <ul id="dropdown-menu-{{ post.id }}" class="dropdown-menu"
+                                    style="display: none; position: absolute; top: 30px; right: 0; list-style: none; padding: 0; margin: 0; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);">
+                                    <li><a href="{% url 'report_post' post.id %}"
+                                            style="text-decoration: none; padding: 8px 16px; display: block;">Report
+                                            Post</a></li>
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+
+
+
+
+
+
+                        <div class="photo">
+                            {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="Post image"
+                                style="width: 100%; height:400px; object-fit: contain;">
+                            {% else %}
+                            <img src="{% static 'images/feed-1.jpg' %}" alt="Default Post image">
+                            {% endif %}
+                        </div>
+
+                        <!-- Updated Like Button in Feed -->
+                        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                            <form method="post" action="{% url 'toggle_like' post.id %}" class="like-form"
+                                id="like-form-{{ post.id }}">
+                                {% csrf_token %}
+                                <button type="submit" style="border: none; background: none; cursor: pointer;">
+                                    {% if request.user in post.likes.all %}
+                                    <i class="fas fa-heart" style="color: #e74c3c; font-size: 24px;"></i>
+                                    {% else %}
+                                    <i class="far fa-heart" style="color: #333; font-size: 24px;"></i>
+                                    {% endif %}
+                                </button>
+                                <span class="like-count" id="like-count-{{ post.id }}">{{ post.likes.count }}</span>
+                                <!-- Display Like Count -->
+                            </form>
+
+                            <a href="#comment-textarea" style="text-decoration: none; color: #333;">
+                                <i class="far fa-comment" style="font-size: 24px;"></i>
+                            </a>
+
+                        </div>
+
+
+
+
+                        <div class="liked-by" id="liked-by-{{ post.id }}">
+                            {% if post.likes.count > 0 %}
+                            {% for like in post.likes.all|slice:":3" %}
+                            <span><img src="{{ like.profile_picture.url }}" alt="{{ like.username }}'s profile picture"
+                                    style="width: 24px; height: 24px; border-radius: 50%;"></span>
+                            {% endfor %}
+                            {% if post.likes.count == 1 %}
+                            <p>Liked by <b>{{ post.likes.first.username }}</b></p>
+                            {% else %}
+                            <p>Liked by <b>{{ post.likes.first.username }}</b> and <b>{{ post.likes.count|add:"-1"
+                                    }}</b> others</p>
+                            {% endif %}
+                            {% else %}
+                            <p>No likes yet.</p>
+                            {% endif %}
+                        </div>
+
+
+                        <div class="caption">
+                            <p><b>{{ post.user.username }}</b> {{ post.caption }} <span
+                                    class="harsh-tag">#lifestyle</span></p>
+                        </div>
+
+                        <div class="comments text-muted">
+                            <h3>Comments</h3>
+
+                            <!-- Add comment form -->
+                            <form method="post" action="{% url 'add_comment' post.id %}">
+                                {% csrf_token %}
+                                <textarea id="comment-textarea" name="comment" rows="3" cols="50"
+                                    placeholder="Add a comment..." required></textarea><br><br>
+                                <button type="submit" class="btn btn-primary">Add Comment</button>
+                            </form>
+                            <!-- Display comments -->
+                            <ul>
+                                {% for comment in post.comments.all %}
+                                <li class="comment-item">
+                                    <div class="comment-header">
+                                        <strong>{{ comment.user.username }}</strong>
+                                        <small class="text-muted">{{ comment.created_at|date:"Y-m-d H:i" }}</small>
+                                    </div>
+                                    <p>{{ comment.text }}</p>
+                                </li>
+                                {% empty %}
+                                <li>No comments yet.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+
+                        <hr> <!-- Optional: Separator between posts -->
                         {% empty %}
-                            <p>No posts available.</p>
+                        <p>No posts available.</p>
                         {% endfor %}
                     </div>
-                    
+
 
                     <div class="feed">
                         <div class="head">
@@ -300,7 +328,7 @@
                             <p>liked-by <b>Lana Rose</b> and <b>5,15 others</b></p>
                         </div>
                         <div class="caption">
-                            <p><b>Kumar Boss</b> Another good day with myself  <span class="harsh-tag">#glass</span></p>
+                            <p><b>Kumar Boss</b> Another good day with myself <span class="harsh-tag">#glass</span></p>
                         </div>
                         <div class="comments text-muted">View all 52 comments</div>
                     </div>
@@ -386,7 +414,8 @@
                             <p>liked-by <b>Ernest Achiver</b> and <b>2,023 others</b></p>
                         </div>
                         <div class="caption">
-                            <p><b>Mrinal Santos</b> Beautifull pic of my friends. <span class="harsh-tag">#friend</span></p>
+                            <p><b>Mrinal Santos</b> Beautifull pic of my friends. <span class="harsh-tag">#friend</span>
+                            </p>
                         </div>
                         <div class="comments text-muted">View all 270 comments</div>
                     </div>
@@ -415,14 +444,14 @@
                             <div class="interaction-buttons">
                                 <button class="like-btn" data-post-id="{{ post.id }}">
                                     {% if request.user in post.likes.all %}
-                                        <i class="uil uil-heart-alt"></i>
+                                    <i class="uil uil-heart-alt"></i>
                                     {% else %}
-                                        <i class="uil uil-heart"></i>
+                                    <i class="uil uil-heart"></i>
                                     {% endif %}
                                 </button>
                                 <span class="likes-count">{{ post.likes.count }}</span>
                             </div>
-                            
+
                         </div>
 
                         <div class="liked-by">
@@ -527,43 +556,50 @@
             </div>
 
             <div class="right">
-                
+
                 <!-- friend request -->
                 <div class="suggested-friends">
                     <h4>Suggested Friends</h4>
-                
+
                     <!-- Loop through suggested friends -->
                     {% for friend in suggested_friends %}
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
-            <div style="display: flex; align-items: center;">
-                <!-- Display friend's profile photo with clickable link -->
-                <div style="margin-right: 15px;">
-                    <a href="{% url 'profile_view' friend.username %}">
-                        {% if friend.profile_picture %}
-                            <img src="{{ friend.profile_picture.url }}" alt="{{ friend.username }}'s Profile Photo" style="width: 50px; height: 50px; border-radius: 50%;">
-                        {% else %}
-                            <img src="{% static 'profile_pics/default_profile_pic.png' %}" alt="Default Profile Photo" style="width: 50px; height: 50px; border-radius: 50%;">
-                        {% endif %}
-                    </a>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
+                        <div style="display: flex; align-items: center;">
+                            <!-- Display friend's profile photo with clickable link -->
+                            <div style="margin-right: 15px;">
+                                <a href="{% url 'profile_view' friend.username %}">
+                                    {% if friend.profile_picture %}
+                                    <img src="{{ friend.profile_picture.url }}"
+                                        alt="{{ friend.username }}'s Profile Photo"
+                                        style="width: 50px; height: 50px; border-radius: 50%;">
+                                    {% else %}
+                                    <img src="{% static 'profile_pics/default_profile_pic.png' %}"
+                                        alt="Default Profile Photo"
+                                        style="width: 50px; height: 50px; border-radius: 50%;">
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div>
+                                <h5 style="margin: 0; font-size: 16px; font-weight: 500;">
+                                    <a href="{% url 'profile_view' friend.username %}"
+                                        style="text-decoration: none; color: #007bff;">{{ friend.username }}</a>
+                                </h5>
+                            </div>
+                        </div>
+                        <div>
+                            <!-- Add friend button -->
+                            <a href="{% url 'send_friend_request' friend.id %}" class="btn btn-primary"
+                                style="font-size: 14px; padding: 5px 10px;">Add Friend</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No suggested friends at the moment.</p>
+                    {% endfor %}
                 </div>
-                <div>
-                    <h5 style="margin: 0; font-size: 16px; font-weight: 500;">
-                        <a href="{% url 'profile_view' friend.username %}" style="text-decoration: none; color: #007bff;">{{ friend.username }}</a>
-                    </h5>
-                </div>
-            </div>
-            <div>
-                <!-- Add friend button -->
-                <a href="{% url 'send_friend_request' friend.id %}" class="btn btn-primary" style="font-size: 14px; padding: 5px 10px;">Add Friend</a>
-            </div>
-        </div>
-    {% empty %}
-        <p>No suggested friends at the moment.</p>
-    {% endfor %}
-                </div>
-                
-                
-                
+
+
+
             </div>
         </div>
     </main>
@@ -626,83 +662,83 @@
         </div>
     </div>
     <script>
-// Wait until the document is ready
+        // Wait until the document is ready
 
-// Wait until the document is ready
-document.addEventListener("DOMContentLoaded", function() {
-    const likeForms = document.querySelectorAll('.like-form');
-    
-    likeForms.forEach(function(form) {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();  // Prevent page reload
+        // Wait until the document is ready
+        document.addEventListener("DOMContentLoaded", function () {
+            const likeForms = document.querySelectorAll('.like-form');
 
-            const scrollPosition = window.scrollY;  // Save the current scroll position
+            likeForms.forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();  // Prevent page reload
 
-            // Get form data (including CSRF token)
-            const formData = new FormData(form);
+                    const scrollPosition = window.scrollY;  // Save the current scroll position
 
-            // Extract post ID from the form action
-            const postId = form.action.split('/').pop();
+                    // Get form data (including CSRF token)
+                    const formData = new FormData(form);
 
-            // Send AJAX request to toggle like
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-                }
-            })
-            .then(response => response.json())  // Handle JSON response
-            .then(data => {
-                const likeButton = form.querySelector('button i');
-                const likeCountSpan = document.getElementById(`like-count-${postId}`);
-                const likedByDiv = document.getElementById(`liked-by-${postId}`);
+                    // Extract post ID from the form action
+                    const postId = form.action.split('/').pop();
 
-                // Toggle the like button color and icon
-                if (data.liked) {
-                    likeButton.classList.remove('far');
-                    likeButton.classList.add('fas');
-                    likeButton.style.color = '#e74c3c';
-                    window.location.reload();  // Red color for liked posts
-                } else {
-                    likeButton.classList.remove('fas');
-                    likeButton.classList.add('far');
-                    likeButton.style.color = '#333'; 
-                    window.location.reload(); // Default color for unliked posts
-                }
+                    // Send AJAX request to toggle like
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                        }
+                    })
+                        .then(response => response.json())  // Handle JSON response
+                        .then(data => {
+                            const likeButton = form.querySelector('button i');
+                            const likeCountSpan = document.getElementById(`like-count-${postId}`);
+                            const likedByDiv = document.getElementById(`liked-by-${postId}`);
 
-                // Update the like count dynamically
-                likeCountSpan.textContent = data.like_count;
+                            // Toggle the like button color and icon
+                            if (data.liked) {
+                                likeButton.classList.remove('far');
+                                likeButton.classList.add('fas');
+                                likeButton.style.color = '#e74c3c';
+                                window.location.reload();  // Red color for liked posts
+                            } else {
+                                likeButton.classList.remove('fas');
+                                likeButton.classList.add('far');
+                                likeButton.style.color = '#333';
+                                window.location.reload(); // Default color for unliked posts
+                            }
 
-                // Update the "Liked by" section dynamically
-                let likedByHtml = '';
-                data.likes.slice(0, 3).forEach(like => {
-                    likedByHtml += `<span><img src="${like.profile_picture}" alt="${like.username}'s profile picture" style="width: 24px; height: 24px; border-radius: 50%;"></span>`;
+                            // Update the like count dynamically
+                            likeCountSpan.textContent = data.like_count;
+
+                            // Update the "Liked by" section dynamically
+                            let likedByHtml = '';
+                            data.likes.slice(0, 3).forEach(like => {
+                                likedByHtml += `<span><img src="${like.profile_picture}" alt="${like.username}'s profile picture" style="width: 24px; height: 24px; border-radius: 50%;"></span>`;
+                            });
+
+                            likedByHtml += `<p>Liked by <b>${data.first_like_user}</b> and <b>${data.like_count}</b> others</p>`;
+
+                            likedByDiv.innerHTML = likedByHtml;
+
+
+                            window.scrollTo(0, scrollPosition);
+
+                            // Reload the page to reflect updated state
+                            window.location.reload();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 });
-
-                likedByHtml += `<p>Liked by <b>${data.first_like_user}</b> and <b>${data.like_count}</b> others</p>`;
-
-                likedByDiv.innerHTML = likedByHtml;
-
-                
-                window.scrollTo(0, scrollPosition);
-
-                // Reload the page to reflect updated state
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error('Error:', error);
             });
         });
-    });
-});
-</script>
+    </script>
 
 
     </script>
     <script>
         // Toggle comments visibility
-        document.getElementById('toggle-comments').addEventListener('click', function() {
+        document.getElementById('toggle-comments').addEventListener('click', function () {
             const commentsContainer = document.getElementById('comments-container');
             if (commentsContainer.style.display === 'none') {
                 commentsContainer.style.display = 'block';
@@ -712,14 +748,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.textContent = 'Show Comments'; // Change button text
             }
         });
-    
+
         function toggleDropdown(postId) {
-    var dropdownMenu = document.getElementById("dropdown-menu-" + postId);
-    var isVisible = dropdownMenu.style.display === "block";
-    dropdownMenu.style.display = isVisible ? "none" : "block";
-}
+            var dropdownMenu = document.getElementById("dropdown-menu-" + postId);
+            var isVisible = dropdownMenu.style.display === "block";
+            dropdownMenu.style.display = isVisible ? "none" : "block";
+        }
     </script>
     <script src="{% static 'main.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
+
 </html>

@@ -20,6 +20,9 @@ def index(request):
 
 
 def home(request):
+    if not request.user.is_authenticated:
+        return redirect('login')  # Redirect unauthenticated users to login page
+    
     # Fetch all posts from users that the logged-in user follows
     following = Friendship.objects.filter(user1=request.user).values_list('user2', flat=True)
     posts = Post.objects.filter(user__in=following).order_by('-created_at')
@@ -31,12 +34,32 @@ def home(request):
     # Fetch the count of unread notifications
     unread_notifications_count = Notification.objects.filter(user=request.user, is_read=False).count()
 
+    # Suggested friends logic
+    user = request.user
+
+    # Get the list of the user's friends, sent requests, and received requests
+    friends = user.followers.all()  # Assuming followers represent friendships
+    sent_requests_ids = user.sent_friend_requests.values_list('to_user', flat=True)
+    received_requests_ids = user.received_friend_requests.values_list('from_user', flat=True)
+
+    # Fetch users not already friends or in requests, and not the current user
+    suggested_friends = User.objects.exclude(
+        id__in=friends
+    ).exclude(
+        id__in=sent_requests_ids
+    ).exclude(
+        id__in=received_requests_ids
+    ).exclude(
+        id=user.id
+    ).order_by('?')[:5]  # Randomly select 5 users
+
     # Pass the friend requests and other context variables to the template
     context = {
         'posts': posts,
         'received_requests': received_requests,
         'sent_requests': sent_requests,
-        'unread_notifications_count': unread_notifications_count,  # Add this line
+        'unread_notifications_count': unread_notifications_count,
+        'suggested_friends': suggested_friends,  # Add suggested friends here
     }
     
     return render(request, 'home.html', context)
