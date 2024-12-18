@@ -186,7 +186,7 @@ def login_view(request):
                         
                         # Redirect based on user type (staff or regular user)
                         if user.is_staff:
-                            messages.success(request, 'Staff login successful.')
+                            
                             return redirect('admin')  # Redirect to staff dashboard
                         else:
                             
@@ -376,7 +376,7 @@ def profile_update(request):
         user.first_name, user.last_name = new_name.split(' ', 1)
         user.bio = new_bio
         user.save()
-        messages.success(request, 'Profile updated successfully!')
+        
         return redirect('profile_view', username=user.username)
     suggested_usernames = get_suggested_usernames(user.username)
     return render(request, 'profile_update.html', {'user': user, 'suggested_usernames': suggested_usernames})
@@ -404,7 +404,7 @@ def create_post(request):
         post = Post(user=request.user, caption=caption, location=location, image=image)
         post.save()
         
-        messages.success(request, 'Post created successfully!')
+        
         return redirect('profile_view', username=request.user.username)
     return render(request, 'create_post.html')
 
@@ -614,7 +614,7 @@ def send_friend_request(request, user_id):
         messages.warning(request, 'Friend request already sent.')
     else:
         FriendRequest.objects.create(from_user=from_user, to_user=to_user)
-        messages.success(request, 'Friend request sent.')
+        
 
     return redirect('profile_view', username=to_user.username) 
 
@@ -844,7 +844,7 @@ def edit_post(request, post_id):
             post.image = image  # Only update image if a new one was uploaded
         post.save()
 
-        messages.success(request, "Post updated successfully.")
+        
         return redirect("post_detail", post_id=post.id)
 
     return render(request, "edit_post.html", {"post": post})
@@ -856,7 +856,7 @@ def delete_post(request, post_id):
 
     if request.method == "POST":
         post.delete()
-        messages.success(request, "Post deleted successfully.")
+        
         return redirect("my_profile_view", username=request.user.username)  # Pass the username here
 
     return render(request, "delete_post.html", {"post": post})
@@ -880,7 +880,7 @@ def report_post(request, post_id):
         if reason:
             report = Report(user=request.user, post=post, reason=reason)
             report.save()
-            messages.success(request, "Your report has been submitted successfully.")
+            
             return redirect('post_detail', post_id=post.id)
         else:
             messages.error(request, "Please select a reason for reporting the post.")  # If no reason selected
@@ -911,7 +911,7 @@ def reported_posts(request):
             report = get_object_or_404(Report, id=report_id)
             report.ignored = True
             report.save()
-            messages.success(request, f"Report for Post {post.id} has been ignored.")
+            # messages.success(request, f"Report for Post {post.id} has been ignored.")
         
         return redirect('reported_posts')  # Redirect to the same page to see the updated status
 

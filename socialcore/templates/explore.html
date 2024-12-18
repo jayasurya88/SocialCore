@@ -240,8 +240,9 @@
                             {% if post.likes.count == 1 %}
                             <p>Liked by <b>{{ post.likes.first.username }}</b></p>
                             {% else %}
-                            <p>Liked by <b>{{ post.likes.first.username }}</b> and <b>{{ post.likes.count|add:"-1"
-                                    }}</b> others</p>
+                            
+                                    <p>Liked by <b>{{ post.likes.first.username }}</b> and <b>{{ post.likes.count|add:"-1"}}</b> others</p>
+
                             {% endif %}
                             {% else %}
                             <p>No likes yet.</p>
