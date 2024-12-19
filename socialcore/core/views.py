@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.db.models import Q
 # index page
 # views.py
-from django.shortcuts import render
+
 from .models import Friendship, Post, Notification  # Import your models
 
 def index(request):
@@ -955,13 +955,12 @@ def explore_page(request):
             Q(user1=user) | Q(user2=user)
         ).values_list('user1', 'user2')  # List of IDs of user's friends (from both directions)
 
-        # Flatten the list of tuples (user1, user2) to a single list of user IDs
         friends_ids = [friend[0] if friend[0] != user.id else friend[1] for friend in friends]
 
         sent_requests_ids = user.sent_friend_requests.values_list('to_user', flat=True)
         received_requests_ids = user.received_friend_requests.values_list('from_user', flat=True)
 
-        # Exclude friends, sent/received requests, current user, and superusers
+      
         suggested_friends = User.objects.exclude(
             id__in=friends_ids  # Exclude current friends
         ).exclude(
